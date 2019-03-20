@@ -1,16 +1,23 @@
 'use strict'
 
 const User = use('App/Models/User');
+const Centro = use('App/Models/Centro');
 
 class UserController {
     async index(){
-        const users = await User.all();
+        const users = await User.query().with('centro').fetch();
         return users;
     }
 
     async create({request}){
         const data = request.only(['username', 'nome', 'endereco', 'id_centro', 'site', 'tipo', 'email', 'password'])
         
+        //Verificar se o centro existe
+        //Verificar se o centro passado existe
+        const centro = await Centro.findBy('id', data.id_centro);
+        if(centro == null){
+            return response.send({"messager":"Couldn't found the centro"});
+        }
         //Check if there are centros
         const user = await User.create(data);
 

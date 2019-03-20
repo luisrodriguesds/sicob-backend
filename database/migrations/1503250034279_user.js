@@ -10,7 +10,12 @@ class UserSchema extends Schema {
       table.string('username', 80).notNullable().unique()
       table.string('nome', 254).notNullable()
       table.string('endereco', 254).notNullable()
-      table.integer('id_centro', 11).notNullable()
+      table
+          .integer('id_centro', 11)
+          .unsigned()
+          .notNullable()
+          .references('id')
+          .inTable('centros')
       table.string('site', 254).notNullable()
       table.string('tipo', 254).notNullable()
       table.string('email', 254).notNullable().unique()

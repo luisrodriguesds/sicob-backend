@@ -21,6 +21,10 @@ class User extends Model {
     })
   }
 
+  centro(){
+    return this.belongsTo('App/Models/Centro');
+  }
+
   /**
    * A relationship on tokens is required for auth to
    * work. Since features like `refreshTokens` or
