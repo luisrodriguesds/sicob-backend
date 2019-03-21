@@ -18,7 +18,8 @@ const Route = use('Route')
 
 //Routes od users
 Route.get('/api/user', 'UserController.index').middleware(['auth', 'ManagerCustom']);
-Route.post('/api/user', 'UserController.create').middleware(['auth', 'ManagerCustom']);
+Route.post('/api/user', 'UserController.create')
+// .middleware(['auth', 'ManagerCustom']);
 Route.put('/api/user/:id', 'UserController.update').middleware(['auth', 'OwnerOrManager']);
 Route.delete('/api/user/:id', 'UserController.delete').middleware(['auth', 'OwnerOrManager']);
 Route.post('/api/auth', 'UserController.authentication');

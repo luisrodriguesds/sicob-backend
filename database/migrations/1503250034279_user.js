@@ -16,6 +16,8 @@ class UserSchema extends Schema {
           .notNullable()
           .references('id')
           .inTable('centros')
+          .onUpdate('CASCADE')
+          .onDelete('CASCADE')
       table.string('site', 254).notNullable()
       table.string('tipo', 254).notNullable()
       table.string('email', 254).notNullable().unique()

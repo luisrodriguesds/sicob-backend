@@ -9,7 +9,7 @@ class UserController {
         return users;
     }
 
-    async create({request}){
+    async create({request, response}){
         const data = request.only(['username', 'nome', 'endereco', 'id_centro', 'site', 'tipo', 'email', 'password'])
         
         //Verificar se o centro existe
