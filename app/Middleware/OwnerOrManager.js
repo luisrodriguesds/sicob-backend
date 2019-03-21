@@ -11,7 +11,7 @@ class OwnerOrManager {
    */
   async handle ({ response, auth, params }, next) {
     // call next to advance the request
-    if(auth.user.id == params.id || auth.user.tipo == 'Gerente'){
+    if(auth.user.id == params.id || auth.user.type == 'Gerente'){
       await next()
     }else{
       return response.send({"messeger":"You don't have a permission"});

@@ -1,18 +1,19 @@
 'use strict'
 
-const Centro = use('App/Models/Centro');
+const Center = use('App/Models/Center');
+
 
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
 /**
- * Resourceful controller for interacting with centros
+ * Resourceful controller for interacting with centers
  */
-class CentroController {
+class CenterController {
   /**
-   * Show a list of all centros.
-   * GET centros
+   * Show a list of all Centers.
+   * GET Centers
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -20,13 +21,13 @@ class CentroController {
    * @param {View} ctx.view
    */
   async index ({ request, response, view }) {
-    const centros = await Centro.all();
-    return centros;
+    const centers = await Center.all();
+    return centers;
   }
 
   /**
-   * Create/save a new centro.
-   * POST centros
+   * Create/save a new Center.
+   * POST Centers
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -34,15 +35,15 @@ class CentroController {
    */
   async store ({ request, response }) {
     const data = request.only([
-      'nome', 'endereco', 'campus', 'cidade', 'site'
+      'name', 'address', 'campus', 'city', 'website', 'initials'
     ]);
-    const centro = await Centro.create(data);
-    return centro;
+    const center = await Center.create(data);
+    return center;
   }
 
   /**
-   * Display a single centro.
-   * GET centros/:id
+   * Display a single Center.
+   * GET Centers/:id
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -50,50 +51,50 @@ class CentroController {
    * @param {View} ctx.view
    */
   async show ({ params, request, response, view }) {
-    const centro = await Centro.findBy('id', params.id);
-    return centro;
+    const center = await Center.findBy('id', params.id);
+    return center;
   }
 
 
   /**
-   * Update centro details.
-   * PUT or PATCH centros/:id
+   * Update Center details.
+   * PUT or PATCH Centers/:id
    *
    * @param {object} ctx
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
   async update ({ params, request, response }) {
-    const centro = await Centro.findBy('id', params.id);
-    if (centro == null) {
+    const center = await Center.findBy('id', params.id);
+    if (center == null) {
       return response.send({"messager":"Row not found"})
     }
 
     const data = request.only([
-      'nome', 'endereco', 'campus', 'cidade', 'site'
+      'name', 'address', 'campus', 'city', 'website', 'initials'
     ]);
 
-    centro.merge(data);
-    await centro.save();
-    return centro;
+    center.merge(data);
+    await center.save();
+    return center;
   }
 
   /**
-   * Delete a centro with id.
-   * DELETE centros/:id
+   * Delete a Center with id.
+   * DELETE Centers/:id
    *
    * @param {object} ctx
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
   async destroy ({ params, request, response }) {
-    const centro = await Centro.findBy('id', params.id);
-    if (centro == null) {
+    const center = await Center.findBy('id', params.id);
+    if (center == null) {
       return response.send({"messager":"Row not found"})
     }
-    await centro.delete();
+    await center.delete();
     return null;
   }
 }
 
-module.exports = CentroController
+module.exports = CenterController

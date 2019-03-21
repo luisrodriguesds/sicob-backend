@@ -26,11 +26,12 @@ Route.post('/api/auth', 'UserController.authentication');
 
 //Centro
 Route.group(()=>{
-  Route.get('/api/centro', 'CentroController.index');
-  Route.post('/api/centro', 'CentroController.store').middleware(['auth', 'ManagerCustom']);
-  Route.get('/api/centro/:id', 'CentroController.show');
-  Route.put('/api/centro/:id', 'CentroController.update').middleware(['auth', 'ManagerCustom']);
-  Route.delete('/api/centro/:id', 'CentroController.destroy').middleware(['auth', 'ManagerCustom']);
+  Route.get('/api/centro', 'CenterController.index');
+  Route.post('/api/centro', 'CenterController.store')
+  // .middleware(['auth', 'ManagerCustom']);
+  Route.get('/api/centro/:id', 'CenterController.show');
+  Route.put('/api/centro/:id', 'CenterController.update').middleware(['auth', 'ManagerCustom']);
+  Route.delete('/api/centro/:id', 'CenterController.destroy').middleware(['auth', 'ManagerCustom']);
 });
 
 

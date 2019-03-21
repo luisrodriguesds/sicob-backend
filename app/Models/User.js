@@ -21,8 +21,8 @@ class User extends Model {
     })
   }
 
-  centro(){
-    return this.belongsTo('App/Models/Centro', 'id_centro');
+  center(){
+    return this.belongsTo('App/Models/Center', 'id_center');
   }
 
   /**

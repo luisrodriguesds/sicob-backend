@@ -1,20 +1,20 @@
 'use strict'
 
 const User = use('App/Models/User');
-const Centro = use('App/Models/Centro');
+const Centro = use('App/Models/Center');
 
 class UserController {
     async index(){
-        const users = await User.query().with('centro').fetch();
+        const users = await User.query().with('center').fetch();
         return users;
     }
 
     async create({request, response}){
-        const data = request.only(['username', 'nome', 'endereco', 'id_centro', 'site', 'tipo', 'email', 'password'])
+        const data = request.only(['username', 'name', 'address', 'id_center', 'website', 'type', 'email', 'password'])
         
         //Verificar se o centro existe
         //Verificar se o centro passado existe
-        const centro = await Centro.findBy('id', data.id_centro);
+        const centro = await Centro.findBy('id', data.id_center);
         if(centro == null){
             return response.send({"messager":"Couldn't found the centro"});
         }
@@ -35,13 +35,14 @@ class UserController {
         if (user == null) {
             return response.send({"messager":"User not found"});
         }
-        const data = request.only(['username', 'nome', 'endereco', 'id_centro', 'site', 'tipo', 'email', 'password']);
+
+        const data = request.only(['username', 'name', 'address', 'id_center', 'website', 'type', 'email', 'password'])        
         user.merge(data);
         user.save();
         return user;
     }
 
-    async delete({request, params}){
+    async delete({response, params}){
         const user = await User.findBy('id', params.id);
         if (user == null) {
             return response.send({"messager":"User not found"});
