@@ -14,7 +14,7 @@ class OwnerOrManager {
     if(auth.user.id == params.id || auth.user.type == 'Gerente'){
       await next()
     }else{
-      return response.send({"messeger":"You don't have a permission"});
+      return response.status(401).json();;
     }
   }
 }
