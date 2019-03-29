@@ -84,7 +84,7 @@ class CategoryController {
     const data = request.only(['name', 'thumb']);
     const check = await Category.query().where('name', 'LIKE', data.name).fetch();
     
-    if (check.rows.length !== 0 && check.rows[0].name != category.name) {
+    if (check.rows.length !== 0 && check.rows[0].id != params.id) {
       return response.status(406).json({"message":"This name already exist"})
     }
     category.merge(data);

@@ -23,6 +23,14 @@ class SubcategoryController {
   async index ({params}) {
     const cat_id = params.id;
     const subs = await Subcategory.query().where('category_id', '=', cat_id).orderBy('name', 'asc').fetch();
+    //add cat
+    if (subs.rows.length !== 0) {
+      const cat = await Category.findBy('id', params.id);
+      for (let i = 0; i < subs.rows.length; i++) {
+        subs.rows[i].category = cat;
+      }
+
+    }
     return subs;
   }
 
@@ -76,15 +84,15 @@ class SubcategoryController {
     const sub = await Subcategory.query().whereRaw(`name LIKE '%${params.name}%' AND category_id = ${params.category_id}`).orderBy('name', 'asc').fetch()
     //add cat
     if (sub.rows.length !== 0) {
-      let i =0;
-      sub.rows.map(el => {
-        // const cat = await Category.findBy('id', el.category_id);
-        // console.log(el.category_id);
-        i++;
-      })
+      const cat = await Category.findBy('id', params.category_id);
+      for (let i = 0; i < sub.rows.length; i++) {
+        sub.rows[i].category = cat;
+      }
+
     }
     return sub
   }
+  
 
   /**
    * Update subcategory details.
@@ -110,11 +118,13 @@ class SubcategoryController {
     }
 
     //if this name already exist
-    // const sub = await Subcategory.query().where('name', 'LIKE', data.name).fetch();
-    // if (sub.rows.length !== 0 ) {
-    //   return response.status(406).json({"message":"This name already exist"});
-    // }
-    return null;
+    const subName = await Subcategory.query().whereRaw(`name LIKE '${data.name}' AND category_id = '${data.category_id}'`).fetch();
+    if (subName.rows.length !== 0 && params.id != subName.rows[0].id) {
+      return response.status(406).json({"message":"This name already exist"});
+    }
+    sub.merge(data);
+    await sub.save();
+    return sub;
   }
 
   /**
