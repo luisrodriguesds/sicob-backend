@@ -52,4 +52,12 @@ Route.group(() => {
   Route.delete('/api/subcategory/:id', 'SubcategoryController.destroy').middleware(['auth', 'ManagerCustom'])
 })
 
-
+//Produtcs
+Route.group(() => {
+  Route.get('/api/product/', 'ProductController.index')
+  Route.post('/api/product', 'ProductController.store').middleware(['auth', 'ManagerCustom'])
+  Route.get('/api/product/show/:id', 'ProductController.show')
+  Route.get('/api/product/search/:name', 'ProductController.search')
+  Route.put('/api/product/:id', 'ProductController.update').middleware(['auth', 'ManagerCustom'])
+  Route.delete('/api/product/:id', 'ProductController.destroy').middleware(['auth', 'ManagerCustom'])
+})

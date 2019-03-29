@@ -1,5 +1,5 @@
 ﻿# Host: localhost  (Version 5.7.25-0ubuntu0.18.04.2)
-# Date: 2019-03-26 09:16:00
+# Date: 2019-03-29 12:26:22
 # Generator: MySQL-Front 6.1  (Build 1.26)
 
 
@@ -14,13 +14,33 @@ CREATE TABLE `adonis_schema` (
   `batch` int(11) DEFAULT NULL,
   `migration_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 
 #
 # Data for table "adonis_schema"
 #
 
-INSERT INTO `adonis_schema` VALUES (1,'1503250034279_user',1,'2019-03-21 09:21:16'),(2,'1503250034280_token',1,'2019-03-21 09:21:17'),(3,'1553170275958_center_schema',1,'2019-03-21 09:21:18'),(4,'1553170947389_add_relationship_center_user_schema',2,'2019-03-21 09:24:42');
+INSERT INTO `adonis_schema` VALUES (1,'1503250034279_user',1,'2019-03-21 09:21:16'),(2,'1503250034280_token',1,'2019-03-21 09:21:17'),(3,'1553170275958_center_schema',1,'2019-03-21 09:21:18'),(4,'1553170947389_add_relationship_center_user_schema',2,'2019-03-21 09:24:42'),(5,'1553172689589_category_schema',3,'2019-03-26 09:33:05'),(6,'1553601603184_subcategory_schema',4,'2019-03-26 09:36:10');
+
+#
+# Structure for table "categories"
+#
+
+DROP TABLE IF EXISTS `categories`;
+CREATE TABLE `categories` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(254) NOT NULL,
+  `thumb` varchar(254) DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+
+#
+# Data for table "categories"
+#
+
+INSERT INTO `categories` VALUES (1,'Moveis',NULL,NULL,NULL),(2,'Eletronicos',NULL,NULL,NULL),(5,'Escritorio',NULL,NULL,NULL);
 
 #
 # Structure for table "centers"
@@ -45,6 +65,29 @@ CREATE TABLE `centers` (
 #
 
 INSERT INTO `centers` VALUES (1,'Centro de Tecnologia','CT','Campus do Pici - Bloco 710 - CEP 60455-900 - Fortaleza - CE ','PICI','Fortaleza','http://www.ct.ufc.br','2019-03-21 09:21:43','2019-03-21 09:21:43');
+
+#
+# Structure for table "subcategories"
+#
+
+DROP TABLE IF EXISTS `subcategories`;
+CREATE TABLE `subcategories` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(254) NOT NULL,
+  `thumb` varchar(254) DEFAULT NULL,
+  `category_id` int(10) unsigned NOT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `subcategories_category_id_foreign` (`category_id`),
+  CONSTRAINT `subcategories_category_id_foreign` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
+
+#
+# Data for table "subcategories"
+#
+
+INSERT INTO `subcategories` VALUES (1,'Mesa',NULL,1,NULL,NULL),(2,'Cadeira',NULL,1,NULL,NULL),(3,'Escrivaninha',NULL,5,NULL,NULL),(4,'Computadores',NULL,2,NULL,NULL),(5,'Acessorios',NULL,2,NULL,NULL),(6,'TV',NULL,2,NULL,NULL),(7,'Áudio','dfvdsfv',2,NULL,'2019-03-29 11:31:03'),(8,'Sofa',NULL,1,NULL,NULL),(9,'Cadeira',NULL,5,NULL,NULL),(10,'Acessorios',NULL,5,NULL,NULL);
 
 #
 # Structure for table "users"
