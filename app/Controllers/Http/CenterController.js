@@ -21,7 +21,7 @@ class CenterController {
    * @param {View} ctx.view
    */
   async index ({ request, response, view }) {
-    const centers = await Center.all();
+    const centers = await Center.query().with('user').fetch();
     return centers;
   }
 

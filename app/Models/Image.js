@@ -12,6 +12,10 @@ class Image extends Model {
   getUrl({path}){
     return `${Env.get('APP_URL')}/api/images/${path}`
   }
+
+  product(){
+    return this.belongsTo('App/Models/Product');
+  }
 }
 
 module.exports = Image

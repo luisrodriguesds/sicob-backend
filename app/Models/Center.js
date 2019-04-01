@@ -4,6 +4,9 @@
 const Model = use('Model')
 
 class Center extends Model {
+  user(){
+    return this.hasMany('App/Models/User', 'id_center')
+  }
 }
 
 module.exports = Center

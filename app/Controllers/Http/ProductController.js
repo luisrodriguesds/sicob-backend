@@ -21,10 +21,36 @@ class ProductController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index ({ request, response, view }) {
-    const products = await Product.query().with('images').with('category').with('subcategory').with('user').fetch();
-    
-    return products;
+  async index ({ request, params }) {
+    const {latitude, longitude} = request.all();
+    const page    = (params.page != undefined) ? params.page : 1
+    const perPage = (params.perPage != undefined) ? params.perPage : 10
+    //if the user's location is 
+    if (latitude != undefined || longitude != undefined) {
+      const products = await Product
+                                  .query()
+                                  .with('images')
+                                  .with('category')
+                                  .with('subcategory')
+                                  .with('user.center')
+                                  .orderBy('created_at', 'desc')
+                                  .nearBy(latitude, longitude, 1)
+                                  .paginate(page, perPage)
+      return products;
+    }else{
+      const products = await Product
+                                  .query()
+                                  .with('images')
+                                  .with('category')
+                                  .with('subcategory')
+                                  .with('user.center')
+                                  .orderBy('created_at', 'desc')
+                                  .paginate(page, perPage)
+                                  
+                                  
+      return products;
+    }
+  
   }
 
   /**
@@ -71,7 +97,7 @@ class ProductController {
    */
   async show ({ params, request, response, view }) {
     const product = await Product.findBy('id', params.id);
-    await product.load('user')
+    await product.load('user.center')
     await product.load('images')
     await product.load('category')
     await product.load('subcategory')

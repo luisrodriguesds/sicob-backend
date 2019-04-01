@@ -43,8 +43,6 @@ class CategoryController {
     
     const data = await Category.create({name, thumb});
     return data;
-    
-
   }
 
   /**
