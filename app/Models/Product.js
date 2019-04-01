@@ -9,9 +9,18 @@ class Product extends Model {
     return this.belongsTo('App/Models/User')
   }
 
+  category(){
+    return this.belongsTo('App/Models/Category')
+  }
+
+  subcategory(){
+    return this.belongsTo('App/Models/Subcategory')
+  }
+
   images(){
     return this.hasMany('App/Models/Image')
   }
+  
 }
 
 module.exports = Product

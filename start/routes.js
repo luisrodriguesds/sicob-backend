@@ -55,9 +55,11 @@ Route.group(() => {
 //Produtcs
 Route.group(() => {
   Route.get('/api/product/', 'ProductController.index')
-  Route.post('/api/product', 'ProductController.store').middleware(['auth', 'ManagerCustom'])
-  Route.get('/api/product/show/:id', 'ProductController.show')
+  Route.post('/api/product', 'ProductController.store').middleware(['auth'])
+  Route.post('/api/product/:id/images', 'ImageController.store').middleware(['auth'])
+  Route.get('/api/images/:path', 'ImageController.show')
+  Route.get('/api/product/:id', 'ProductController.show')
   Route.get('/api/product/search/:name', 'ProductController.search')
-  Route.put('/api/product/:id', 'ProductController.update').middleware(['auth', 'ManagerCustom'])
-  Route.delete('/api/product/:id', 'ProductController.destroy').middleware(['auth', 'ManagerCustom'])
+  Route.put('/api/product/:id', 'ProductController.update').middleware(['auth'])
+  Route.delete('/api/product/:id', 'ProductController.destroy').middleware(['auth'])
 })

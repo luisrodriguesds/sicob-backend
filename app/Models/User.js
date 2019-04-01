@@ -20,6 +20,20 @@ class User extends Model {
       }
     })
   }
+  static get dates(){
+    return super.dates.concat(['dob'])
+  }
+
+  static get hidden(){
+    return ['password']
+  }
+
+  static formatDates (field, value) {
+    if (field === 'dob') {
+      return value.format('YYYY-MM-DD')
+    }
+    return super.formatDates(field, value)
+  }
 
   center(){
     return this.belongsTo('App/Models/Center', 'id_center');

@@ -5,6 +5,8 @@
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
 const Product = use('App/Models/Product')
+const Category = use('App/Models/Category')
+const Subcategory = use('App/Models/Subcategory')
 
 /**
  * Resourceful controller for interacting with products
@@ -20,11 +22,10 @@ class ProductController {
    * @param {View} ctx.view
    */
   async index ({ request, response, view }) {
-    const products = await Product.all();
+    const products = await Product.query().with('images').with('category').with('subcategory').with('user').fetch();
     
     return products;
   }
-
 
   /**
    * Create/save a new product.
@@ -34,7 +35,29 @@ class ProductController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async store ({ request, response }) {
+  async store ({ request, auth, response }) {
+    const data = request.only(['name', 'description', 'num_patrimony', 'category_id', 'subcategory_id', 'address', 'latitude', 'longitude']);
+
+    //if exist category
+    const cat = await Category.findBy('id', data.category_id)
+    if (cat == null) {
+      return response.status(406).json({"message":"Category not found"})
+    }
+
+    //if exist subcat
+    const sub = await Subcategory.findBy('id', data.subcategory_id)
+    if (sub == null) {
+      return response.status(406).json({"message":"Subcategory not found"})
+    }
+    
+    //if sub belongs to cat
+    if (cat.id != sub.category_id) {
+      return response.status(406).json({"message":"Subcategory don't belongs to this category"})      
+    }
+
+    const product = await Product.create({...data, user_id: auth.user.id})
+
+    return product;
   }
 
   /**
@@ -47,6 +70,12 @@ class ProductController {
    * @param {View} ctx.view
    */
   async show ({ params, request, response, view }) {
+    const product = await Product.findBy('id', params.id);
+    await product.load('user')
+    await product.load('images')
+    await product.load('category')
+    await product.load('subcategory')
+    return product
   }
 
   /**
@@ -57,7 +86,42 @@ class ProductController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update ({ params, request, response }) {
+  async update ({ params, auth, request, response }) {
+    const data = request.only(['name', 'description', 'num_patrimony', 'category_id', 'subcategory_id', 'address', 'latitude', 'longitude']);
+    
+    //if exist the product
+    const product = await Product.findBy('id', params.id)
+    if (product == null) {
+      return response.status(406).json({"message":"Product not found"})
+    }
+
+    //if producut belongs to owner or if the user is manager
+    if (auth.user.id == product.user_id || auth.user.type == 'Gerente') {
+
+        //if exist category
+        const cat = await Category.findBy('id', data.category_id)
+        if (cat == null) {
+          return response.status(406).json({"message":"Category not found"})
+        }
+
+        //if exist subcat
+        const sub = await Subcategory.findBy('id', data.subcategory_id)
+        if (sub == null) {
+          return response.status(406).json({"message":"Subcategory not found"})
+        }
+
+        //if sub belongs to cat
+        if (cat.id != sub.category_id) {
+          return response.status(406).json({"message":"Subcategory don't belongs to this category"})      
+        }
+        product.merge(data)
+        product.save();
+        return product;
+
+    }else{
+      return response.status(406).json({"message":"You don't have permission"})
+    }
+
   }
 
   /**
@@ -68,7 +132,21 @@ class ProductController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy ({ params, request, response }) {
+  async destroy ({ params, auth, response }) {
+    
+    //if exist the product
+    const product = await Product.findBy('id', params.id)
+    if (product == null) {
+      return response.status(406).json({"message":"Product not found"})
+    }
+
+    //if producut belongs to owner or if the user is manager
+    if (auth.user.id == product.user_id || auth.user.type == 'Gerente') {
+      await product.delete();
+      return response.status(200).json();
+    }else{
+      return response.status(406).json({"message":"You don't have permission"})
+    }
   }
 }
 
