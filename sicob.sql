@@ -1,5 +1,5 @@
 ﻿# Host: localhost  (Version 5.7.25-0ubuntu0.18.04.2)
-# Date: 2019-03-29 12:26:22
+# Date: 2019-04-08 09:38:46
 # Generator: MySQL-Front 6.1  (Build 1.26)
 
 
@@ -14,13 +14,13 @@ CREATE TABLE `adonis_schema` (
   `batch` int(11) DEFAULT NULL,
   `migration_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
 
 #
 # Data for table "adonis_schema"
 #
 
-INSERT INTO `adonis_schema` VALUES (1,'1503250034279_user',1,'2019-03-21 09:21:16'),(2,'1503250034280_token',1,'2019-03-21 09:21:17'),(3,'1553170275958_center_schema',1,'2019-03-21 09:21:18'),(4,'1553170947389_add_relationship_center_user_schema',2,'2019-03-21 09:24:42'),(5,'1553172689589_category_schema',3,'2019-03-26 09:33:05'),(6,'1553601603184_subcategory_schema',4,'2019-03-26 09:36:10');
+INSERT INTO `adonis_schema` VALUES (1,'1503250034279_user',1,'2019-03-21 09:21:16'),(2,'1503250034280_token',1,'2019-03-21 09:21:17'),(3,'1553170275958_center_schema',1,'2019-03-21 09:21:18'),(4,'1553170947389_add_relationship_center_user_schema',2,'2019-03-21 09:24:42'),(5,'1553172689589_category_schema',3,'2019-03-26 09:33:05'),(6,'1553601603184_subcategory_schema',4,'2019-03-26 09:36:10'),(7,'1553871691605_product_schema',5,'2019-03-29 12:27:46'),(8,'1553873378042_image_schema',6,'2019-03-29 12:33:13');
 
 #
 # Structure for table "categories"
@@ -111,13 +111,13 @@ CREATE TABLE `users` (
   UNIQUE KEY `users_email_unique` (`email`),
   KEY `users_id_center_foreign` (`id_center`),
   CONSTRAINT `users_id_center_foreign` FOREIGN KEY (`id_center`) REFERENCES `centers` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 
 #
 # Data for table "users"
 #
 
-INSERT INTO `users` VALUES (1,'root','ROOT','Campus do PICI - Centro de Tecnologia, bc 701','roo.com','Gerente','root@root','$2a$10$AQJzaaPUUUvoUFgrUvhZtuDAmBjekF6kEzeR7z/xMMdWcn7HttW9e','2019-03-21 09:27:32','2019-03-21 09:27:32',1);
+INSERT INTO `users` VALUES (1,'root','ROOT','Campus do PICI - Centro de Tecnologia, bc 701','roo.com','Gerente','root@root','$2a$10$AQJzaaPUUUvoUFgrUvhZtuDAmBjekF6kEzeR7z/xMMdWcn7HttW9e','2019-03-21 09:27:32','2019-03-21 09:27:32',1),(2,'diatec','Departamento Integração Acadêmica de Tecnologia','Campus do PICI - Centro de Tecnologia, bc 710','www.diatec.ufc.br','Normal','secretaria@diatec.ufc.br','$2a$10$vdZjsMkGhnM1BGP3qMJSMu9zdsfOYJovYuCeJ7kagwl5V43wW879a','2019-04-01 08:37:53','2019-04-01 08:37:53',1);
 
 #
 # Structure for table "tokens"
@@ -143,3 +143,59 @@ CREATE TABLE `tokens` (
 # Data for table "tokens"
 #
 
+
+#
+# Structure for table "products"
+#
+
+DROP TABLE IF EXISTS `products`;
+CREATE TABLE `products` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(254) NOT NULL,
+  `description` mediumtext,
+  `num_patrimony` varchar(254) DEFAULT NULL,
+  `user_id` int(11) unsigned DEFAULT NULL,
+  `category_id` int(10) unsigned DEFAULT NULL,
+  `subcategory_id` int(10) unsigned DEFAULT NULL,
+  `address` varchar(254) DEFAULT NULL,
+  `latitude` decimal(9,6) NOT NULL,
+  `longitude` decimal(9,6) NOT NULL,
+  `status` int(11) NOT NULL DEFAULT '1',
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `products_user_id_foreign` (`user_id`),
+  KEY `products_category_id_foreign` (`category_id`),
+  KEY `products_subcategory_id_foreign` (`subcategory_id`),
+  CONSTRAINT `products_category_id_foreign` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `products_subcategory_id_foreign` FOREIGN KEY (`subcategory_id`) REFERENCES `subcategories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `products_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+
+#
+# Data for table "products"
+#
+
+INSERT INTO `products` VALUES (2,'Mesa de escritório','Mesa em ótimo estado','5185481',1,5,9,'Campus do PICI',-3.744153,-38.577805,1,'2019-04-01 09:37:18','2019-04-01 09:37:18'),(3,'Cadeira de escritório','O departamento oferece uma cadeira de escritorio em otimo estado!','89797522',1,1,2,'Campus do PICI',-3.742673,-38.574322,1,'2019-04-01 10:33:20','2019-04-01 10:33:20'),(4,'Telefone sem fio','O departamento oferece um telefone sem fio que está em desuso, porém em otimo estado!','89797522',1,1,2,'Campus do PICI',-27.204534,-27.204534,1,'2019-04-01 15:09:53','2019-04-01 15:09:53');
+
+#
+# Structure for table "images"
+#
+
+DROP TABLE IF EXISTS `images`;
+CREATE TABLE `images` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `product_id` int(10) unsigned DEFAULT NULL,
+  `path` varchar(256) NOT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `images_product_id_foreign` (`product_id`),
+  CONSTRAINT `images_product_id_foreign` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
+
+#
+# Data for table "images"
+#
+
+INSERT INTO `images` VALUES (5,3,'1554148051567-Google_Images_2015_logo.svg.png','2019-04-01 16:47:31','2019-04-01 16:47:31'),(6,3,'1554148051567-Google-Projetual.jpg','2019-04-01 16:47:31','2019-04-01 16:47:31');

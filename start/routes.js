@@ -66,3 +66,13 @@ Route.group(() => {
   Route.put('/api/product/:id', 'ProductController.update').middleware(['auth'])
   Route.delete('/api/product/:id', 'ProductController.destroy').middleware(['auth'])
 })
+
+//Centro
+Route.group(()=>{
+  Route.get('/api/solicitation', 'SolicitationController.index');
+  Route.post('/api/solicitation', 'SolicitationController.store').middleware(['auth']);
+  Route.get('/api/solicitation/:product_id', 'SolicitationController.show');  //Show all soliciation of this produtc
+  Route.get('/api/solicitation/:product_id/:user_id', 'SolicitationController.show');  // Show just unique solicitation
+  Route.put('/api/solicitation/:id', 'SolicitationController.update').middleware(['auth']);
+  Route.delete('/api/solicitation/:id', 'SolicitationController.destroy').middleware(['auth']);
+});
