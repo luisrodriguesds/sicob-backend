@@ -25,6 +25,7 @@ class ProductController {
     const {latitude, longitude} = request.all();
     const page    = (params.page != undefined) ? params.page : 1
     const perPage = (params.perPage != undefined) ? params.perPage : 10
+    
     //if the user's location is 
     if (latitude != undefined || longitude != undefined) {
       const products = await Product
@@ -47,7 +48,7 @@ class ProductController {
                                   .orderBy('created_at', 'desc')
                                   .paginate(page, perPage)
                                   
-                                  
+                                
       return products;
     }
   
@@ -63,7 +64,7 @@ class ProductController {
    */
   async store ({ request, auth, response }) {
     const data = request.only(['name', 'description', 'num_patrimony', 'category_id', 'subcategory_id', 'address', 'latitude', 'longitude']);
-
+    //Exibiir seus próprios produtos 
     //if exist category
     const cat = await Category.findBy('id', data.category_id)
     if (cat == null) {

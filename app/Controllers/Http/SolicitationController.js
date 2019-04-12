@@ -41,7 +41,7 @@ class SolicitationController {
       return response.status(406).json({"message":"Product not found"});
     }else if (sol_product.rows.length > 0) {
       //Verifcar se status é o status do solicitacao é igual a 2, se for, só troca o status, se nao, a solicitação já existe
-      if (sol_product.rows[0].status == 2) {
+      if (sol_product.rows[0].status == 2 || sol_product.rows[0].status == 0) {
         await Solicitation.query().whereRaw(`product_id = '${data.product_id}' AND user_id = '${auth.user.id}'`).update({status: 1});
         await Product.query().where('id', '=', sol_product.rows[0].product_id).update({status: 2});        
         sol_product.rows[0].status = 1;
@@ -49,9 +49,6 @@ class SolicitationController {
       }else{
         //O status pode ser 0(Recusado), 1(Já existe), 3(Aprovada)
         switch (sol_product.rows[0].status) {
-          case 0:
-            return response.status(406).json({"message":"This solicitation was recuse"})
-          break;
           case 1:
             return response.status(406).json({"message":"This solicitation already exist"});
           break;
