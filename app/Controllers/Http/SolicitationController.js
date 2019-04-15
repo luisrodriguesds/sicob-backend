@@ -70,6 +70,8 @@ class SolicitationController {
 
     //Mudar status do produto e enviar email para o dono do produto
     // ..
+    
+    //Mudar o status do produto
     await Product.query().where('id', '=', data.product_id).update({status: 2});        
     
     return sol;

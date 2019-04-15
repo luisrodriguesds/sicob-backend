@@ -21,15 +21,16 @@ class ProductController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index ({ request, params }) {
+  //Rota para exibir produtos na página inicial
+  async index ({ request, params, auth }) {
     const {latitude, longitude} = request.all();
     const page    = (params.page != undefined) ? params.page : 1
     const perPage = (params.perPage != undefined) ? params.perPage : 10
-    
     //if the user's location is 
     if (latitude != undefined || longitude != undefined) {
       const products = await Product
                                   .query()
+                                  .where('status', '=', '1')
                                   .with('images')
                                   .with('category')
                                   .with('subcategory')
@@ -41,6 +42,7 @@ class ProductController {
     }else{
       const products = await Product
                                   .query()
+                                  .where('status', '=', '1')
                                   .with('images')
                                   .with('category')
                                   .with('subcategory')
@@ -53,7 +55,10 @@ class ProductController {
     }
   
   }
+  //Rota para diversos filtros
+  async filter(request, response){
 
+  }
   /**
    * Create/save a new product.
    * POST products
@@ -96,15 +101,60 @@ class ProductController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async show ({ params, request, response, view }) {
+  //Rota para exibir a página unica do produto
+  async show ({ params, auth, request, response, view }) {
+    //Exibir se status = 1, se nao verificar se é dono do produto ou se é solicitadando do produto
     const product = await Product.findBy('id', params.id);
-    await product.load('user.center')
-    await product.load('images')
-    await product.load('category')
-    await product.load('subcategory')
-    return product
+    try {
+      await auth.check();
+    } catch (error) {
+      
+    }
+    if (product == null) {
+      //Se o produto nao for encontrado
+      return response.json();
+    }else if (product.status == 1) {
+      //Se o status = 1, pode exibir o produto
+      await product.load('user.center')
+      await product.load('images')
+      await product.load('category')
+      await product.load('subcategory')
+      return product
+    }else if(auth.user == null){
+      //Caso o status != 1, pedir autenticacao
+      return response.json()
+    }else if (product.user_id == auth.user.id) {
+      //Caso auth seja dono do produto, pode exibir independente do status
+      await product.load('user.center')
+      await product.load('images')
+      await product.load('category')
+      await product.load('subcategory')
+      await product.load('solicitation')
+      return product
+    }else{
+      //Caso nao seja dono do produto, mas seja o solicitadando, pode exibir o produto independente do status
+      await product.load('solicitation')
+      const jsonProd = JSON.parse(JSON.stringify(product))
+      if (product.solicitation != null && jsonProd.solicitation[0].user_id == auth.user.id) {
+        await product.load('user.center')
+        await product.load('images')
+        await product.load('category')
+        await product.load('subcategory')
+        return product
+      }else{
+        return response.json();
+      }
+    }
+  }
+  //Rota para exibir todos os produtos já solicitados
+  async showSolicitation(auth){
+
   }
 
+  //Rota para exibir produtos já cadastrados
+  async showHistory(auth){
+
+  }
   /**
    * Update product details.
    * PUT or PATCH products/:id

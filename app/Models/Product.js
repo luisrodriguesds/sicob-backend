@@ -34,6 +34,10 @@ class Product extends Model {
   images(){
     return this.hasMany('App/Models/Image')
   }
+
+  solicitation(){
+    return this.hasMany('App/Models/Solicitation')
+  }
   
 }
 
