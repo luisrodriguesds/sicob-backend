@@ -16,8 +16,9 @@
 /** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
 const Route = use('Route')
 
-//Routes od users
+//Users
 Route.get('/api/user', 'UserController.index').middleware(['auth', 'ManagerCustom']);
+Route.get('/api/user/logout', 'UserController.logout').middleware(['auth']);
 Route.post('/api/user', 'UserController.create').middleware(['auth', 'ManagerCustom']);
 Route.put('/api/user/:id', 'UserController.update').middleware(['auth', 'OwnerOrManager']);
 Route.delete('/api/user/:id', 'UserController.delete').middleware(['auth', 'OwnerOrManager']);
@@ -57,6 +58,8 @@ Route.group(() => {
   Route.get('/api/product/index/', 'ProductController.index')
   Route.get('/api/product/index/:page', 'ProductController.index')
   Route.get('/api/product/index/:page/:perPage', 'ProductController.index')
+  Route.get('/api/product/filter/', 'ProductController.filter')
+  Route.get('/api/product/historic/', 'ProductController.historic').middleware(['auth'])
   Route.post('/api/product', 'ProductController.store').middleware(['auth'])
   Route.post('/api/product/:id/images', 'ImageController.store').middleware(['auth'])
   Route.get('/api/images/:path', 'ImageController.show')
@@ -67,9 +70,9 @@ Route.group(() => {
   Route.delete('/api/product/:id', 'ProductController.destroy').middleware(['auth'])
 })
 
-//Centro
+//Solicitations
 Route.group(()=>{
-  Route.get('/api/solicitation', 'SolicitationController.index');
+  Route.get('/api/solicitation', 'SolicitationController.index').middleware(['auth']);
   Route.post('/api/solicitation', 'SolicitationController.store').middleware(['auth']);
   Route.get('/api/solicitation/:product_id', 'SolicitationController.show');  //Show all soliciation of this produtc
   Route.get('/api/solicitation/:product_id/:user_id', 'SolicitationController.show');  // Show just unique solicitation

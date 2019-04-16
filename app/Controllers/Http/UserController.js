@@ -30,6 +30,11 @@ class UserController {
         return token;
     }
 
+    async logout({auth}){
+        await auth.logout()
+        return true;
+    }
+
     async update({request, response, params}){
         const user = await User.findBy('id', params.id);
         if (user == null) {

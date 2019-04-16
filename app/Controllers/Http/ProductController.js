@@ -7,7 +7,6 @@
 const Product = use('App/Models/Product')
 const Category = use('App/Models/Category')
 const Subcategory = use('App/Models/Subcategory')
-
 /**
  * Resourceful controller for interacting with products
  */
@@ -57,8 +56,12 @@ class ProductController {
   }
   //Rota para diversos filtros
   async filter(request, response){
-
+    //Liste dos produtos de cada tipo
+    const {name, tipo, subtipo} = request.all()
+    // return response.json({"tetse":"jdbshcj"})
+    return null
   }
+
   /**
    * Create/save a new product.
    * POST products
@@ -101,8 +104,9 @@ class ProductController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
+
   //Rota para exibir a página unica do produto
-  async show ({ params, auth, request, response, view }) {
+  async show ({ params, auth, response }) {
     //Exibir se status = 1, se nao verificar se é dono do produto ou se é solicitadando do produto
     const product = await Product.findBy('id', params.id);
     try {
@@ -146,14 +150,24 @@ class ProductController {
       }
     }
   }
-  //Rota para exibir todos os produtos já solicitados
-  async showSolicitation(auth){
-
-  }
 
   //Rota para exibir produtos já cadastrados
-  async showHistory(auth){
+  async historic({response, auth}){
 
+    if (auth.user == null) {
+      return response.json({"message":"You must be authenticated"});
+    }
+
+    const products = await Product.query()
+                                  .where({user_id: auth.user.id})
+                                  .with('user.center')
+                                  .with('images')
+                                  .with('category')
+                                  .with('subcategory')
+                                  .orderBy('created_at', 'desc')                                  
+                                  .fetch()
+
+    return  products;
   }
   /**
    * Update product details.
