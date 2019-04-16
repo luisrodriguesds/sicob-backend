@@ -14,15 +14,20 @@
 */
 
 /** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
+
 const Route = use('Route')
 
 //Users
-Route.get('/api/user', 'UserController.index').middleware(['auth', 'ManagerCustom']);
-Route.get('/api/user/logout', 'UserController.logout').middleware(['auth']);
-Route.post('/api/user', 'UserController.create').middleware(['auth', 'ManagerCustom']);
-Route.put('/api/user/:id', 'UserController.update').middleware(['auth', 'OwnerOrManager']);
-Route.delete('/api/user/:id', 'UserController.delete').middleware(['auth', 'OwnerOrManager']);
-Route.post('/api/auth', 'UserController.authentication');
+Route.group(()=>{
+  Route.get('/api/user', 'UserController.index').middleware(['auth', 'ManagerCustom']);
+  Route.get('/api/user/logout', 'UserController.logout').middleware(['auth']);
+  Route.get('/api/user/profilephoto/:id', 'UserController.show');
+  Route.post('/api/user/profilephoto/:id', 'UserController.profilephoto').middleware(['auth', 'ManagerCustom']);
+  Route.post('/api/user/', 'UserController.create').middleware(['auth', 'ManagerCustom']);
+  Route.put('/api/user/:id', 'UserController.update').middleware(['auth', 'OwnerOrManager']);
+  Route.delete('/api/user/:id', 'UserController.delete').middleware(['auth', 'OwnerOrManager']);
+  Route.post('/api/auth', 'UserController.authentication');
+});
 
 //Centro
 Route.group(()=>{

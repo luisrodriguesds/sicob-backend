@@ -19,11 +19,7 @@ class SolicitationController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index ({ request, auth, response, view }) {
-    if (auth.user == null) {
-      return response.json({"message":"You must be authenticated"});
-    }
-
+  async index ({auth}) {
     const sols = await Solicitation.query().where({user_id: auth.user.id}).with('user').with('product.user').fetch();
     return sols;
   }

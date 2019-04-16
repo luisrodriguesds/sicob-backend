@@ -1,5 +1,5 @@
 ﻿# Host: localhost  (Version 5.7.25-0ubuntu0.18.04.2)
-# Date: 2019-04-11 09:54:27
+# Date: 2019-04-16 12:15:09
 # Generator: MySQL-Front 6.1  (Build 1.26)
 
 
@@ -20,7 +20,7 @@ CREATE TABLE `adonis_schema` (
 # Data for table "adonis_schema"
 #
 
-INSERT INTO `adonis_schema` VALUES (1,'1503250034279_user',1,'2019-03-21 09:21:16'),(2,'1503250034280_token',1,'2019-03-21 09:21:17'),(3,'1553170275958_center_schema',1,'2019-03-21 09:21:18'),(4,'1553170947389_add_relationship_center_user_schema',2,'2019-03-21 09:24:42'),(5,'1553172689589_category_schema',3,'2019-03-26 09:33:05'),(6,'1553601603184_subcategory_schema',4,'2019-03-26 09:36:10'),(7,'1553871691605_product_schema',5,'2019-03-29 12:27:46'),(8,'1553873378042_image_schema',6,'2019-03-29 12:33:13'),(9,'1554725999547_solicitation_schema',7,'2019-04-08 09:39:01');
+INSERT INTO `adonis_schema` VALUES (1,'1503250034279_user',1,'2019-03-21 09:21:16'),(2,'1503250034280_token',1,'2019-03-21 09:21:17'),(3,'1553170275958_center_schema',1,'2019-03-21 09:21:18'),(4,'1553170947389_add_relationship_center_user_schema',2,'2019-03-21 09:24:42'),(5,'1553172689589_category_schema',3,'2019-03-26 09:33:05'),(6,'1553601603184_subcategory_schema',4,'2019-03-26 09:36:10'),(7,'1553871691605_product_schema',5,'2019-03-29 12:27:46'),(8,'1553873378042_image_schema',6,'2019-03-29 12:33:13'),(9,'1554725999547_solicitation_schema',7,'2019-04-08 09:39:01'),(10,'1555426259026_add_profilephoto_user_schema',8,'2019-04-16 11:57:38');
 
 #
 # Structure for table "categories"
@@ -106,6 +106,7 @@ CREATE TABLE `users` (
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   `id_center` int(11) unsigned NOT NULL,
+  `profile_photo` varchar(254) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `users_username_unique` (`username`),
   UNIQUE KEY `users_email_unique` (`email`),
@@ -117,7 +118,7 @@ CREATE TABLE `users` (
 # Data for table "users"
 #
 
-INSERT INTO `users` VALUES (1,'root','ROOT','Campus do PICI - Centro de Tecnologia, bc 701','roo.com','Gerente','root@root','$2a$10$AQJzaaPUUUvoUFgrUvhZtuDAmBjekF6kEzeR7z/xMMdWcn7HttW9e','2019-03-21 09:27:32','2019-03-21 09:27:32',1),(2,'diatec','Departamento Integração Acadêmica de Tecnologia','Campus do PICI - Centro de Tecnologia, bc 710','www.diatec.ufc.br','Normal','secretaria@diatec.ufc.br','$2a$10$vdZjsMkGhnM1BGP3qMJSMu9zdsfOYJovYuCeJ7kagwl5V43wW879a','2019-04-01 08:37:53','2019-04-01 08:37:53',1);
+INSERT INTO `users` VALUES (1,'root','ROOT','Campus do PICI - Centro de Tecnologia, bc 701','roo.com','Gerente','root@root','$2a$10$AQJzaaPUUUvoUFgrUvhZtuDAmBjekF6kEzeR7z/xMMdWcn7HttW9e','2019-03-21 09:27:32','2019-03-21 09:27:32',1,NULL),(2,'diatec','Departamento Integração Acadêmica de Tecnologia','Campus do PICI - Centro de Tecnologia, bc 710','www.diatec.ufc.br','Normal','secretaria@diatec.ufc.br','$2a$10$vdZjsMkGhnM1BGP3qMJSMu9zdsfOYJovYuCeJ7kagwl5V43wW879a','2019-04-01 08:37:53','2019-04-16 12:02:37',1,'1555426957008-Google-Projetual.jpg');
 
 #
 # Structure for table "tokens"
@@ -176,7 +177,7 @@ CREATE TABLE `products` (
 # Data for table "products"
 #
 
-INSERT INTO `products` VALUES (2,'Mesa de escritório','Mesa em ótimo estado','5185481',1,5,9,'Campus do PICI',-3.744153,-38.577805,1,'2019-04-01 09:37:18','2019-04-01 09:37:18'),(3,'Cadeira de escritório','O departamento oferece uma cadeira de escritorio em otimo estado!','89797522',1,1,2,'Campus do PICI',-3.742673,-38.574322,1,'2019-04-01 10:33:20','2019-04-11 09:21:52'),(4,'Telefone sem fio','O departamento oferece um telefone sem fio que está em desuso, porém em otimo estado!','89797522',1,1,2,'Campus do PICI',-27.204534,-27.204534,2,'2019-04-01 15:09:53','2019-04-11 09:40:59'),(5,'Computador - CPU','O departamento oferece uma CPU, somente gabinete, que está em desuso, porém em otimo estado!','135974',2,2,4,'Campus do PICI',-27.204534,-27.204534,1,'2019-04-08 10:48:34','2019-04-08 10:48:34');
+INSERT INTO `products` VALUES (2,'Mesa de escritório','Mesa em ótimo estado','5185481',1,5,9,'Campus do PICI',-3.744153,-38.577805,1,'2019-04-01 09:37:18','2019-04-01 09:37:18'),(3,'Cadeira de escritório','O departamento oferece uma cadeira de escritorio em otimo estado!','89797522',1,1,2,'Campus do PICI',-3.742673,-38.574322,1,'2019-04-01 10:33:20','2019-04-11 09:21:52'),(4,'Telefone sem fio','O departamento oferece um telefone sem fio que está em desuso, porém em otimo estado!','89797522',1,1,2,'Campus do PICI',-27.204534,-27.204534,2,'2019-04-01 15:09:53','2019-04-12 09:31:30'),(5,'Computador - CPU','O departamento oferece uma CPU, somente gabinete, que está em desuso, porém em otimo estado!','135974',2,2,4,'Campus do PICI',-27.204534,-27.204534,1,'2019-04-08 10:48:34','2019-04-08 10:48:34');
 
 #
 # Structure for table "images"
@@ -223,4 +224,4 @@ CREATE TABLE `solicitations` (
 # Data for table "solicitations"
 #
 
-INSERT INTO `solicitations` VALUES (3,2,4,1,'2019-04-08 10:06:56','2019-04-11 09:40:59'),(4,2,3,1,'2019-04-08 10:44:47','2019-04-11 09:21:51');
+INSERT INTO `solicitations` VALUES (3,2,4,1,'2019-04-08 10:06:56','2019-04-12 09:31:30'),(4,2,3,1,'2019-04-08 10:44:47','2019-04-11 09:21:51');
