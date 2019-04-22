@@ -22,7 +22,7 @@ Route.group(()=>{
   Route.get('/api/user', 'UserController.index').middleware(['auth', 'ManagerCustom']);
   Route.get('/api/user/logout', 'UserController.logout').middleware(['auth']);
   
-  Route.get('/api/user/profilephoto/:id', 'UserController.showProfilephoto');
+  Route.get('/api/user/profilephoto/:path', 'UserController.showProfilephoto');
   Route.post('/api/user/profilephoto/:id', 'UserController.profilephoto').middleware(['auth', 'OwnerOrManager']);
   Route.put('/api/user/profilephoto/:id', 'UserController.putProfilephoto').middleware(['auth', 'OwnerOrManager']);
   

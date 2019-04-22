@@ -6,9 +6,11 @@ const Helpers = use('Helpers')
 const Drive   = use('Drive');
 
 class UserController {
+    
     async index(){
         const users = await User.query().with('center').fetch();
-        return users;
+        
+        return users.toJSON();
     }
 
     async create({request, response}){
@@ -33,7 +35,7 @@ class UserController {
             return response.status(406).json({"message":"User not found"})
         }
         const image = request.file('image', {type:['image'], size:'2mb'});
-        const newName = `${Date.now()}-${image.clientName}`;
+        const newName = `${Date.now()}${user_id.id}.${image.extname}`;        
         
         await image.move(Helpers.tmpPath('profiles'), {
             name: newName
@@ -49,11 +51,7 @@ class UserController {
     }
 
     async showProfilephoto({params, response}){
-        const user_id = await User.findBy('id', params.id);
-        if (user_id == null) {
-            response.status(406).json();
-        }
-        return response.download(Helpers.tmpPath(`profiles/${user_id.profile_photo}`))
+        return response.download(Helpers.tmpPath(`profiles/${params.path}`))
     }
 
     async putProfilephoto({params, response, request}){
@@ -63,7 +61,7 @@ class UserController {
             return response.status(406).json({"message":"User not found"})
         }
         const image = request.file('image', {type:['image'], size:'2mb'});
-        const newName = `${Date.now()}.${image.extname}`;
+        const newName = `${Date.now()}${user_id.id}.${image.extname}`;
 
         await image.move(Helpers.tmpPath('profiles'), {
             name: newName

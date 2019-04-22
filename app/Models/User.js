@@ -5,6 +5,7 @@ const Model = use('Model')
 
 /** @type {import('@adonisjs/framework/src/Hash')} */
 const Hash = use('Hash')
+const Env = use('Env')
 
 class User extends Model {
   static boot () {
@@ -28,6 +29,14 @@ class User extends Model {
     return ['password']
   }
 
+  static get computed(){
+    return ['url'];
+  }
+
+  getUrl({profile_photo}){
+    return ((profile_photo == null) ? '' : `${Env.get('APP_URL')}/api/user/profilephoto/${profile_photo}`)
+  }
+
   center(){
     return this.belongsTo('App/Models/Center', 'id_center');
   }
@@ -36,6 +45,7 @@ class User extends Model {
     return this.hasMany('App/Models/Product')
   }
 
+  
   /**
    * A relationship on tokens is required for auth to
    * work. Since features like `refreshTokens` or
