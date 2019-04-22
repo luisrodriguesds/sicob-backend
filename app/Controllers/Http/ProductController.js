@@ -54,6 +54,7 @@ class ProductController {
     }
   
   }
+  
   //Rota para diversos filtros
   async filter(request, response){
     //Liste dos produtos de cada tipo

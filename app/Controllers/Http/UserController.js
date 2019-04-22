@@ -3,6 +3,7 @@
 const User = use('App/Models/User');
 const Centro = use('App/Models/Center');
 const Helpers = use('Helpers')
+const Drive   = use('Drive');
 
 class UserController {
     async index(){
@@ -47,12 +48,42 @@ class UserController {
         return image;
     }
 
-    async show({params, response}){
+    async showProfilephoto({params, response}){
         const user_id = await User.findBy('id', params.id);
         if (user_id == null) {
             response.status(406).json();
         }
         return response.download(Helpers.tmpPath(`profiles/${user_id.profile_photo}`))
+    }
+
+    async putProfilephoto({params, response, request}){
+        //Check user_id
+        const user_id = await User.findBy('id', params.id);
+        if (user_id == null) {
+            return response.status(406).json({"message":"User not found"})
+        }
+        const image = request.file('image', {type:['image'], size:'2mb'});
+        const newName = `${Date.now()}.${image.extname}`;
+
+        await image.move(Helpers.tmpPath('profiles'), {
+            name: newName
+        });
+
+        if (!image.move()) {
+            return images.erro();
+        }
+        
+        //Deleta - resolver o warning
+        try {
+            await Drive.delete(Helpers.tmpPath(`profiles/${user_id.profile_photo}`))
+        } catch (error) {
+            console.log(error);
+        }
+
+        //Novo nome na tabela
+        await User.query().where({id:params.id}).update({profile_photo: newName})
+
+        return image;
     }
 
     async authentication({request, auth}){
