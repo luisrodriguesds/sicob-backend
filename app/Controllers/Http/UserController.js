@@ -1,9 +1,9 @@
 'use strict'
 
-const User = use('App/Models/User');
-const Centro = use('App/Models/Center');
-const Helpers = use('Helpers')
-const Drive   = use('Drive');
+const User      = use('App/Models/User');
+const Centro    = use('App/Models/Center');
+const Helpers   = use('Helpers');
+const Drive     = use('Drive');
 
 class UserController {
     
