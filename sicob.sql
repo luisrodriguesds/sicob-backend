@@ -1,5 +1,5 @@
-﻿# Host: localhost  (Version 5.7.25-0ubuntu0.18.04.2)
-# Date: 2019-04-16 12:15:09
+﻿# Host: localhost  (Version 5.7.26-0ubuntu0.18.04.1)
+# Date: 2019-04-29 17:27:06
 # Generator: MySQL-Front 6.1  (Build 1.26)
 
 
@@ -14,13 +14,13 @@ CREATE TABLE `adonis_schema` (
   `batch` int(11) DEFAULT NULL,
   `migration_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=latin1;
 
 #
 # Data for table "adonis_schema"
 #
 
-INSERT INTO `adonis_schema` VALUES (1,'1503250034279_user',1,'2019-03-21 09:21:16'),(2,'1503250034280_token',1,'2019-03-21 09:21:17'),(3,'1553170275958_center_schema',1,'2019-03-21 09:21:18'),(4,'1553170947389_add_relationship_center_user_schema',2,'2019-03-21 09:24:42'),(5,'1553172689589_category_schema',3,'2019-03-26 09:33:05'),(6,'1553601603184_subcategory_schema',4,'2019-03-26 09:36:10'),(7,'1553871691605_product_schema',5,'2019-03-29 12:27:46'),(8,'1553873378042_image_schema',6,'2019-03-29 12:33:13'),(9,'1554725999547_solicitation_schema',7,'2019-04-08 09:39:01'),(10,'1555426259026_add_profilephoto_user_schema',8,'2019-04-16 11:57:38');
+INSERT INTO `adonis_schema` VALUES (1,'1503250034279_user',1,'2019-03-21 09:21:16'),(2,'1503250034280_token',1,'2019-03-21 09:21:17'),(3,'1553170275958_center_schema',1,'2019-03-21 09:21:18'),(4,'1553170947389_add_relationship_center_user_schema',2,'2019-03-21 09:24:42'),(5,'1553172689589_category_schema',3,'2019-03-26 09:33:05'),(6,'1553601603184_subcategory_schema',4,'2019-03-26 09:36:10'),(7,'1553871691605_product_schema',5,'2019-03-29 12:27:46'),(8,'1553873378042_image_schema',6,'2019-03-29 12:33:13'),(9,'1554725999547_solicitation_schema',7,'2019-04-08 09:39:01'),(10,'1555426259026_add_profilephoto_user_schema',8,'2019-04-16 11:57:38'),(11,'1556559716308_add_fields_products_schema',9,'2019-04-29 14:49:53');
 
 #
 # Structure for table "categories"
@@ -118,7 +118,7 @@ CREATE TABLE `users` (
 # Data for table "users"
 #
 
-INSERT INTO `users` VALUES (1,'root','ROOT','Campus do PICI - Centro de Tecnologia, bc 701','roo.com','Gerente','root@root','$2a$10$AQJzaaPUUUvoUFgrUvhZtuDAmBjekF6kEzeR7z/xMMdWcn7HttW9e','2019-03-21 09:27:32','2019-03-21 09:27:32',1,NULL),(2,'diatec','Departamento Integração Acadêmica de Tecnologia','Campus do PICI - Centro de Tecnologia, bc 710','www.diatec.ufc.br','Normal','secretaria@diatec.ufc.br','$2a$10$vdZjsMkGhnM1BGP3qMJSMu9zdsfOYJovYuCeJ7kagwl5V43wW879a','2019-04-01 08:37:53','2019-04-16 12:02:37',1,'1555426957008-Google-Projetual.jpg');
+INSERT INTO `users` VALUES (1,'root','ROOT','Campus do PICI - Centro de Tecnologia, bc 701','roo.com','Gerente','root@root','$2a$10$AQJzaaPUUUvoUFgrUvhZtuDAmBjekF6kEzeR7z/xMMdWcn7HttW9e','2019-03-21 09:27:32','2019-03-21 09:27:32',1,NULL),(2,'diatec','Departamento Integração Acadêmica de Tecnologia','Campus do PICI - Centro de Tecnologia, bc 710','www.diatec.ufc.br','Normal','secretaria@diatec.ufc.br','$2a$10$vdZjsMkGhnM1BGP3qMJSMu9zdsfOYJovYuCeJ7kagwl5V43wW879a','2019-04-01 08:37:53','2019-04-22 14:00:20',1,'1555952420650.jpeg');
 
 #
 # Structure for table "tokens"
@@ -164,6 +164,9 @@ CREATE TABLE `products` (
   `status` int(11) NOT NULL DEFAULT '1',
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
+  `campus` varchar(254) DEFAULT NULL,
+  `unity` varchar(254) DEFAULT NULL,
+  `department` varchar(254) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `products_user_id_foreign` (`user_id`),
   KEY `products_category_id_foreign` (`category_id`),
@@ -177,7 +180,7 @@ CREATE TABLE `products` (
 # Data for table "products"
 #
 
-INSERT INTO `products` VALUES (2,'Mesa de escritório','Mesa em ótimo estado','5185481',1,5,9,'Campus do PICI',-3.744153,-38.577805,1,'2019-04-01 09:37:18','2019-04-01 09:37:18'),(3,'Cadeira de escritório','O departamento oferece uma cadeira de escritorio em otimo estado!','89797522',1,1,2,'Campus do PICI',-3.742673,-38.574322,1,'2019-04-01 10:33:20','2019-04-11 09:21:52'),(4,'Telefone sem fio','O departamento oferece um telefone sem fio que está em desuso, porém em otimo estado!','89797522',1,1,2,'Campus do PICI',-27.204534,-27.204534,2,'2019-04-01 15:09:53','2019-04-12 09:31:30'),(5,'Computador - CPU','O departamento oferece uma CPU, somente gabinete, que está em desuso, porém em otimo estado!','135974',2,2,4,'Campus do PICI',-27.204534,-27.204534,1,'2019-04-08 10:48:34','2019-04-08 10:48:34');
+INSERT INTO `products` VALUES (2,'Mesa de escritório','Mesa em ótimo estado','5185481',1,5,9,'Campus do PICI',-3.744153,-38.577805,1,'2019-04-01 09:37:18','2019-04-01 09:37:18','PICI','Centro de tecnologia','DIATEC'),(3,'Cadeira de escritório','O departamento oferece uma cadeira de escritorio em otimo estado!','89797522',1,1,2,'Campus do PICI',-3.742673,-38.574322,1,'2019-04-01 10:33:20','2019-04-11 09:21:52','PICI','Centro de tecnologia','DIATEC'),(4,'Telefone sem fio','O departamento oferece um telefone sem fio que está em desuso, porém em otimo estado!','89797522',1,1,2,'Campus do PICI',-27.204534,-27.204534,2,'2019-04-01 15:09:53','2019-04-12 09:31:30','PICI','Centro de tecnologia','DIATEC'),(5,'Computador - CPU','O departamento oferece uma CPU, somente gabinete, que está em desuso, porém em otimo estado!','135974',2,2,4,'Campus do PICI',-27.204534,-27.204534,1,'2019-04-08 10:48:34','2019-04-08 10:48:34','PICI','Centro de tecnologia','DIATEC'),(6,'Balcão de sala','O departamento oferece uma CPU, somente gabinete, que está em desuso, porém em otimo estado!','681684',1,1,1,'Campus do PICI',-27.204534,-27.204534,1,'2019-04-29 15:12:32','2019-04-29 15:12:32','PICI','Centro de tecnologia','DIATEC'),(7,'Telefone com fio','O departamento oferece uma CPU, somente gabinete, que está em desuso, porém em otimo estado!','242442',1,2,7,'Av da universidade',-27.204534,-27.204534,1,'2019-04-29 16:06:21','2019-04-29 16:06:21','Benfica','CH1','Departamento de História');
 
 #
 # Structure for table "images"

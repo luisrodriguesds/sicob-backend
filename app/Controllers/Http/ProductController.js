@@ -54,13 +54,76 @@ class ProductController {
     }
   
   }
-  
+
   //Rota para diversos filtros
-  async filter(request, response){
+  async search({request, response}){
     //Liste dos produtos de cada tipo
-    const {name, tipo, subtipo} = request.all()
-    // return response.json({"tetse":"jdbshcj"})
-    return null
+    const {name, type, subtype} = request.all()
+    //Dois caminho, categoria ou nao
+    switch (type) {
+      //type pode assumir 
+      case 'all':
+        const products = await Product.query().whereRaw(`name LIKE '%${name}%'`).fetch()
+        return products
+      break;
+      case 'location':
+        
+      break;
+      case 'category':
+        if (name == null) {
+          const product = await Product.query()
+                                        .whereRaw(`category_id = '${subtype}'`)
+                                        .with('category')
+                                        .with('images')
+                                        .with('category')
+                                        .with('subcategory')
+                                        .with('user.center')
+                                        .orderBy('created_at', 'desc')
+                                        .fetch()
+          return product
+        }else{
+          const product = await Product.query()
+                                        .whereRaw(`category_id = '${subtype}' AND name LIKE '%${name}%'`)
+                                        .with('category')
+                                        .with('images')
+                                        .with('category')
+                                        .with('subcategory')
+                                        .with('user.center')
+                                        .orderBy('created_at', 'desc')
+                                        .fetch()
+          return product
+        }
+      break;
+      default:
+        if (type != 'campus' && type != 'unity' && type != 'department') {
+          return response.status(406).json({"message":"The variable type is not inside of the pattern"})
+        }
+
+        if (name == null) {
+          const product = await Product.query()
+                                        .whereRaw(`${type} LIKE '%${subtype}%'`)
+                                        .with('category')
+                                        .with('images')
+                                        .with('category')
+                                        .with('subcategory')
+                                        .with('user.center')
+                                        .orderBy('created_at', 'desc')
+                                        .fetch()
+          return product
+        }else{
+          const product = await Product.query()
+                                        .whereRaw(`${type} LIKE '%${subtype}%' AND name LIKE '%${name}%'`)
+                                        .with('category')
+                                        .with('images')
+                                        .with('category')
+                                        .with('subcategory')
+                                        .with('user.center')
+                                        .orderBy('created_at', 'desc')
+                                        .fetch()
+          return product
+        }
+      break;
+    }
   }
 
   /**
@@ -72,7 +135,7 @@ class ProductController {
    * @param {Response} ctx.response
    */
   async store ({ request, auth, response }) {
-    const data = request.only(['name', 'description', 'num_patrimony', 'category_id', 'subcategory_id', 'address', 'latitude', 'longitude']);
+    const data = request.only(['name', 'description', 'num_patrimony', 'category_id', 'subcategory_id', 'address', 'latitude', 'longitude', 'campus', 'unity', 'department']);
     //Exibiir seus próprios produtos 
     //if exist category
     const cat = await Category.findBy('id', data.category_id)
@@ -170,6 +233,7 @@ class ProductController {
 
     return  products;
   }
+
   /**
    * Update product details.
    * PUT or PATCH products/:id
@@ -179,7 +243,7 @@ class ProductController {
    * @param {Response} ctx.response
    */
   async update ({ params, auth, request, response }) {
-    const data = request.only(['name', 'description', 'num_patrimony', 'category_id', 'subcategory_id', 'address', 'latitude', 'longitude']);
+    const data = request.only(['name', 'description', 'num_patrimony', 'category_id', 'subcategory_id', 'address', 'latitude', 'longitude', 'campus', 'unity', 'department']);
     
     //if exist the product
     const product = await Product.findBy('id', params.id)
