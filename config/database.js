@@ -6,6 +6,15 @@ const Env = use('Env')
 /** @type {import('@adonisjs/ignitor/src/Helpers')} */
 const Helpers = use('Helpers')
 
+// const Url = require('url-parse')
+// const DB_HOST = new Url(Env.get('DB_HOST'))
+
+// DB_HOST=sql10.freemysqlhosting.net
+// DB_PORT=3306
+// DB_USER=sql10291099
+// DB_PASSWORD=vwkjK3ukH3
+// DB_DATABASE=sql10291099
+
 module.exports = {
   /*
   |--------------------------------------------------------------------------
