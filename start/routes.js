@@ -17,6 +17,10 @@
 
 const Route = use('Route')
 
+Route.get('/api/wc', ({response, request}) => {
+  return response.json({"message":"bem vindo ao adonis com docker!"})
+});
+
 //Users
 Route.group(()=>{
   Route.get('/api/user', 'UserController.index').middleware(['auth', 'ManagerCustom']);
