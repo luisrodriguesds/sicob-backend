@@ -12,6 +12,21 @@ class UserController {
         
         return users.toJSON();
     }
+    async show({params}){
+        const user = await User.findBy('id', params.id);
+        try {
+            user.load('center');
+        } catch (error) {
+            return user;
+        }
+        return user;
+    }
+    
+    async token({auth}){
+        const user = await User.findBy('id', auth.user.id);
+        user.load('center');
+        return user;
+    }
 
     async create({request, response}){
         const data = request.only(['username', 'name', 'address', 'id_center', 'website', 'type', 'email', 'password'])
@@ -54,6 +69,34 @@ class UserController {
         return response.download(Helpers.tmpPath(`profiles/${params.path}`))
     }
 
+    async putProfilephoto_old({params, response, request}){
+        //Check user_id
+        const user_id = await User.findBy('id', params.id);
+        if (user_id == null) {
+            return response.status(406).json({"message":"User not found"})
+        }
+        const image = request.file('image', {type:['image'], size:'2mb'});
+        const newName = `${Date.now()}${user_id.id}.${image.extname}`;
+
+        const url = 'http://aguabacabal.com.br/tmp/profile-photo.php';
+        
+        var req = request.post(url, function (err, resp, body) {
+            if (err) {
+                console.log('Error!');
+            } else {
+                console.log('URL: ' + body);
+            }
+        });
+
+        var form = req.form();
+        form.append('file', '<FILE_DATA>', {
+            filename: newName,
+            contentType: image.type+'/'+image.subtype
+        });
+
+        return image;
+    }
+    
     async putProfilephoto({params, response, request}){
         //Check user_id
         const user_id = await User.findBy('id', params.id);

@@ -24,6 +24,8 @@ Route.get('/api/wc', ({response, request}) => {
 //Users
 Route.group(()=>{
   Route.get('/api/user', 'UserController.index').middleware(['auth', 'ManagerCustom']);
+  Route.get('/api/user/show/:id', 'UserController.show').middleware(['auth', 'OwnerOrManager']);
+  Route.get('/api/user/token', 'UserController.token').middleware(['auth']);
   Route.get('/api/user/logout', 'UserController.logout').middleware(['auth']);
   
   Route.get('/api/user/profilephoto/:path', 'UserController.showProfilephoto');
@@ -71,6 +73,7 @@ Route.group(() => {
   Route.get('/api/product/index/:page', 'ProductController.index')
   Route.get('/api/product/index/:page/:perPage', 'ProductController.index')
   Route.get('/api/product/search', 'ProductController.search')
+  Route.get('/api/product/search/:page', 'ProductController.search')
   Route.get('/api/product/historic/', 'ProductController.historic').middleware(['auth'])
   Route.post('/api/product', 'ProductController.store').middleware(['auth'])
   Route.post('/api/product/:id/images', 'ImageController.store').middleware(['auth'])

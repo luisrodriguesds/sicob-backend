@@ -56,14 +56,17 @@ class ProductController {
   }
 
   //Rota para diversos filtros
-  async search({request, response}){
+  async search({request, response, params}){
     //Liste dos produtos de cada tipo
     const {name, type, subtype} = request.all()
+    const page    = (params.page != undefined) ? params.page : 1
+    const perPage = (params.perPage != undefined) ? params.perPage : 10
+
     //Dois caminho, categoria ou nao
     switch (type) {
       //type pode assumir 
       case 'all':
-        const products = await Product.query().whereRaw(`name LIKE '%${name}%'`).fetch()
+        const products = await Product.query().whereRaw(`name LIKE '%${name}%'`).paginate(page, perPage)
         return products
       break;
       case 'location':
@@ -79,7 +82,7 @@ class ProductController {
                                         .with('subcategory')
                                         .with('user.center')
                                         .orderBy('created_at', 'desc')
-                                        .fetch()
+                                        .paginate(page, perPage)
           return product
         }else{
           const product = await Product.query()
@@ -90,7 +93,7 @@ class ProductController {
                                         .with('subcategory')
                                         .with('user.center')
                                         .orderBy('created_at', 'desc')
-                                        .fetch()
+                                        .paginate(page, perPage)                                  
           return product
         }
       break;
@@ -108,7 +111,7 @@ class ProductController {
                                         .with('subcategory')
                                         .with('user.center')
                                         .orderBy('created_at', 'desc')
-                                        .fetch()
+                                        .paginate(page, perPage) 
           return product
         }else{
           const product = await Product.query()
@@ -119,7 +122,7 @@ class ProductController {
                                         .with('subcategory')
                                         .with('user.center')
                                         .orderBy('created_at', 'desc')
-                                        .fetch()
+                                        .paginate(page, perPage) 
           return product
         }
       break;
@@ -228,7 +231,7 @@ class ProductController {
                                   .with('images')
                                   .with('category')
                                   .with('subcategory')
-                                  .orderBy('created_at', 'desc')                                  
+                                  .orderBy('created_at', 'desc')
                                   .fetch()
 
     return  products;
