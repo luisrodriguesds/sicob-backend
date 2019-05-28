@@ -12,6 +12,7 @@ class UserController {
         
         return users.toJSON();
     }
+    
     async show({params}){
         const user = await User.findBy('id', params.id);
         try {
