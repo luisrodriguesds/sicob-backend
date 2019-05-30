@@ -21,7 +21,7 @@ class ProductController {
    * @param {View} ctx.view
    */
   //Rota para exibir produtos na página inicial
-  async index ({ request, params, auth }) {
+  async index ({ request, params }) {
     const {latitude, longitude} = request.all();
     const page    = (params.page != undefined) ? params.page : 1
     const perPage = (params.perPage != undefined) ? params.perPage : 10

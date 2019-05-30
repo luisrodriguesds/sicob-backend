@@ -20,7 +20,7 @@ class SolicitationController {
    * @param {View} ctx.view
    */
   async index ({auth}) {
-    const sols = await Solicitation.query().where({user_id: auth.user.id}).with('user').with('product.user').fetch();
+    const sols = await Solicitation.query().where({user_id: auth.user.id, status: 1}).with('user').with('product.user').fetch();
     return sols;
   }
 
