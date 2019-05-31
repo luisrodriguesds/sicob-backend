@@ -1,10 +1,12 @@
 'use strict'
 
-const User      = use('App/Models/User');
-const Centro    = use('App/Models/Center');
-const Helpers   = use('Helpers');
-const Drive     = use('Drive');
-
+const User          = use('App/Models/User');
+const Centro        = use('App/Models/Center');
+const Helpers       = use('Helpers');
+const Drive         = use('Drive');
+const RequestPass   = use('App/Models/RequestPass');
+const Hash          = use('Hash')
+const Mail          = use('Mail');
 class UserController {
     
     async index(){
@@ -161,6 +163,48 @@ class UserController {
         }
         user.delete();
     }
+
+    async requestNewPass({params, response}){
+        const email = (params.email == undefined) ? 0 : params.email;
+        const user  = await User.findBy('email', email);
+        const key   = await Hash.make(`${email}-${Math.random()*10000}`);
+        
+        if(user == null){
+            return response.status(406).json({"message":"User not found"})
+        }
+
+        user.key = key;
+        user.link = 'http://localhost:3000/recuperar-senha?token='+key;
+        // await Mail.send('emails.welcome', user.toJSON(), (message) => {
+        //     message
+        //         .to(user.email)
+        //         .from('<from-email>')
+        //         .subject('SICOB - UFC | Recuperação de Senha')
+        //     })
+        await RequestPass.create({user_id:user.id, key});
+        return key;
+    }
+
+    async setNewPass({request, response}){
+        const data  = request.only(['token', 'password']);
+        const req   = await RequestPass.findBy('key', data.token);
+
+        if (req == null) {
+            return response.status(406).json({"message":"User not found"})            
+        }
+        //Comparar as datas
+        const currentDate   = new Date();
+        const rowDate       = new Date(req.created_at);
+        const dif           = currentDate - rowDate;
+
+        if (Math.floor(dif/(1000*60)) >= 2) {
+            return response.status(406).json({"message":"Token invalid"})         
+        }
+        return dif;
+        //const req = await
+    }
+
+
 }
 
 module.exports = UserController

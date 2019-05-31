@@ -1,5 +1,5 @@
-﻿# Host: localhost  (Version 5.7.26-0ubuntu0.18.04.1)
-# Date: 2019-04-29 17:27:06
+﻿# Host: 0.0.0.0  (Version 5.7.26-0ubuntu0.18.04.1)
+# Date: 2019-05-31 13:49:36
 # Generator: MySQL-Front 6.1  (Build 1.26)
 
 
@@ -14,13 +14,13 @@ CREATE TABLE `adonis_schema` (
   `batch` int(11) DEFAULT NULL,
   `migration_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=latin1;
 
 #
 # Data for table "adonis_schema"
 #
 
-INSERT INTO `adonis_schema` VALUES (1,'1503250034279_user',1,'2019-03-21 09:21:16'),(2,'1503250034280_token',1,'2019-03-21 09:21:17'),(3,'1553170275958_center_schema',1,'2019-03-21 09:21:18'),(4,'1553170947389_add_relationship_center_user_schema',2,'2019-03-21 09:24:42'),(5,'1553172689589_category_schema',3,'2019-03-26 09:33:05'),(6,'1553601603184_subcategory_schema',4,'2019-03-26 09:36:10'),(7,'1553871691605_product_schema',5,'2019-03-29 12:27:46'),(8,'1553873378042_image_schema',6,'2019-03-29 12:33:13'),(9,'1554725999547_solicitation_schema',7,'2019-04-08 09:39:01'),(10,'1555426259026_add_profilephoto_user_schema',8,'2019-04-16 11:57:38'),(11,'1556559716308_add_fields_products_schema',9,'2019-04-29 14:49:53');
+INSERT INTO `adonis_schema` VALUES (1,'1503250034279_user',1,'2019-03-21 09:21:16'),(2,'1503250034280_token',1,'2019-03-21 09:21:17'),(3,'1553170275958_center_schema',1,'2019-03-21 09:21:18'),(4,'1553170947389_add_relationship_center_user_schema',2,'2019-03-21 09:24:42'),(5,'1553172689589_category_schema',3,'2019-03-26 09:33:05'),(6,'1553601603184_subcategory_schema',4,'2019-03-26 09:36:10'),(7,'1553871691605_product_schema',5,'2019-03-29 12:27:46'),(8,'1553873378042_image_schema',6,'2019-03-29 12:33:13'),(9,'1554725999547_solicitation_schema',7,'2019-04-08 09:39:01'),(10,'1555426259026_add_profilephoto_user_schema',8,'2019-04-16 11:57:38'),(11,'1556559716308_add_fields_products_schema',9,'2019-04-29 14:49:53'),(13,'1559313234950_request_pass_schema',10,'2019-05-31 11:36:39');
 
 #
 # Structure for table "categories"
@@ -118,7 +118,7 @@ CREATE TABLE `users` (
 # Data for table "users"
 #
 
-INSERT INTO `users` VALUES (1,'root','ROOT','Campus do PICI - Centro de Tecnologia, bc 701','roo.com','Gerente','root@root','$2a$10$AQJzaaPUUUvoUFgrUvhZtuDAmBjekF6kEzeR7z/xMMdWcn7HttW9e','2019-03-21 09:27:32','2019-03-21 09:27:32',1,NULL),(2,'diatec','Departamento Integração Acadêmica de Tecnologia','Campus do PICI - Centro de Tecnologia, bc 710','www.diatec.ufc.br','Normal','secretaria@diatec.ufc.br','$2a$10$vdZjsMkGhnM1BGP3qMJSMu9zdsfOYJovYuCeJ7kagwl5V43wW879a','2019-04-01 08:37:53','2019-04-22 14:00:20',1,'1555952420650.jpeg');
+INSERT INTO `users` VALUES (1,'root','ROOT','Campus do PICI - Centro de Tecnologia, bc 701','roo.com','Gerente','root@root','$2a$10$vdZjsMkGhnM1BGP3qMJSMu9zdsfOYJovYuCeJ7kagwl5V43wW879a','2019-03-21 09:27:32','2019-03-21 09:27:32',1,'1555952420650.jpeg'),(2,'diatec','Departamento Integração Acadêmica de Tecnologia testete','Campus do PICI - Centro de Tecnologia, bc 710','www.diatec.ufc.br','Normal','luisitaloar@gmail.com','$2a$10$uEp28d8MsSk431KEHHeUp.cZdhKVC4.2b4YCAr5gl9y3qqfkKrRm.','2019-04-01 08:37:53','2019-05-31 10:19:57',1,'1555952420650.jpeg');
 
 #
 # Structure for table "tokens"
@@ -174,7 +174,7 @@ CREATE TABLE `products` (
   CONSTRAINT `products_category_id_foreign` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `products_subcategory_id_foreign` FOREIGN KEY (`subcategory_id`) REFERENCES `subcategories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `products_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
 
 #
 # Data for table "products"
@@ -228,3 +228,25 @@ CREATE TABLE `solicitations` (
 #
 
 INSERT INTO `solicitations` VALUES (3,2,4,1,'2019-04-08 10:06:56','2019-04-12 09:31:30'),(4,2,3,1,'2019-04-08 10:44:47','2019-04-11 09:21:51');
+
+#
+# Structure for table "request_passes"
+#
+
+DROP TABLE IF EXISTS `request_passes`;
+CREATE TABLE `request_passes` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) unsigned DEFAULT NULL,
+  `key` varchar(256) NOT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `request_passes_user_id_foreign` (`user_id`),
+  CONSTRAINT `request_passes_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+#
+# Data for table "request_passes"
+#
+
+INSERT INTO `request_passes` VALUES (1,2,'$2a$10$hNy6/Da3qJXJuHZWmVqJv.d2SGgYa/WePRv28hHPZ2sq1z9Ik5L7e','2019-05-31 13:35:52','2019-05-31 13:35:52');
