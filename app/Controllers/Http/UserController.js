@@ -149,7 +149,7 @@ class UserController {
 
         const data = request.only(['username', 'name', 'address', 'id_center', 'website', 'type', 'email', 'password'])        
         user.merge(data);
-        user.save();
+        await user.save();
         return user;
     }
 
@@ -181,27 +181,36 @@ class UserController {
         //         .from('<from-email>')
         //         .subject('SICOB - UFC | Recuperação de Senha')
         //     })
+        
         await RequestPass.create({user_id:user.id, key});
         return key;
     }
 
     async setNewPass({request, response}){
-        const data  = request.only(['token', 'password']);
-        const req   = await RequestPass.findBy('key', data.token);
+        const {token, password}  = request.only(['token', 'password']);
+        const data = {password};
+        const req   = await RequestPass.findBy('key', token);
 
         if (req == null) {
-            return response.status(406).json({"message":"User not found"})            
+            return response.status(406).json({"message":"Token not found"})            
         }
         //Comparar as datas
         const currentDate   = new Date();
         const rowDate       = new Date(req.created_at);
-        const dif           = currentDate - rowDate;
+        let dif             = currentDate - rowDate;
+            dif             = Math.floor(dif/(1000*60*60));
 
-        if (Math.floor(dif/(1000*60)) >= 2) {
-            return response.status(406).json({"message":"Token invalid"})         
+        if (dif >= 2) {
+            return response.status(406).json({"message":"Invalid token"})         
         }
-        return dif;
-        //const req = await
+        console.log(req.user_id);
+        const user = await User.findBy('id', req.user_id);
+        user.merge(data);
+        await user.save();
+
+        //apagar token
+        await req.delete();
+        return user;
     }
 
 
