@@ -22,45 +22,42 @@ class ProductController {
    */
   //Rota para exibir produtos na página inicial
   async index ({ request, params }) {
-    const {latitude, longitude} = request.all();
-    const page    = (params.page != undefined) ? params.page : 1
-    const perPage = (params.perPage != undefined) ? params.perPage : 10
+    const {latitude = undefined, longitude = undefined} = request.all();
+    const {page=1, perPage=10} = request.get();
+
     //if the user's location is 
     if (latitude != undefined || longitude != undefined) {
       const products = await Product
                                   .query()
-                                  .where('status', '=', '1')
+                                  .where({status:1})
                                   .with('images')
                                   .with('category')
                                   .with('subcategory')
                                   .with('user.center')
                                   .orderBy('created_at', 'desc')
                                   .nearBy(latitude, longitude, 1)
-                                  .paginate(page, perPage)
+                                  .paginate(page, perPage);
       return products;
     }else{
       const products = await Product
                                   .query()
-                                  .where('status', '=', '1')
+                                  .where({status:1})
                                   .with('images')
                                   .with('category')
                                   .with('subcategory')
                                   .with('user.center')
                                   .orderBy('created_at', 'desc')
-                                  .paginate(page, perPage)
-                                  
-                                
+                                  .paginate(page, perPage);
       return products;
     }
-  
+      
   }
 
   //Rota para diversos filtros
   async search({request, response, params}){
     //Liste dos produtos de cada tipo
     const {name, type, subtype} = request.all()
-    const page    = (params.page != undefined) ? params.page : 1
-    const perPage = (params.perPage != undefined) ? params.perPage : 10
+    const {page=1, perPage=10} = request.get();
 
     //Dois caminho, categoria ou nao
     switch (type) {
@@ -68,6 +65,22 @@ class ProductController {
       case 'all':
         const products = await Product.query().whereRaw(`name LIKE '%${name}%'`).paginate(page, perPage)
         return products
+      break;
+      case 'date':
+        if (name == null) {
+          const product = await Product.query()
+                                        .whereRaw(`created_at BETWEEN '${subtype}' AND '${subtype}-23:59:59.999'`)
+                                        .with('category')
+                                        .with('images')
+                                        .with('category')
+                                        .with('subcategory')
+                                        .with('user.center')
+                                        .orderBy('created_at', 'desc')
+                                        .paginate(page, perPage)
+          return product;
+        }else{
+
+        }
       break;
       case 'location':
         
@@ -86,16 +99,18 @@ class ProductController {
           return product
         }else{
           const product = await Product.query()
-                                        .whereRaw(`category_id = '${subtype}' AND name LIKE '%${name}%'`)
-                                        .with('category')
-                                        .with('images')
-                                        .with('category')
-                                        .with('subcategory')
-                                        .with('user.center')
-                                        .orderBy('created_at', 'desc')
-                                        .paginate(page, perPage)                                  
+                                      .whereRaw(`category_id = '${subtype}' AND name LIKE '%${name}%'`)
+                                      .with('category')
+                                      .with('images')
+                                      .with('category')
+                                      .with('subcategory')
+                                      .with('user.center')
+                                      .orderBy('created_at', 'desc')
+                                      .paginate(page, perPage)                                  
           return product
         }
+        
+        
       break;
       default:
         if (type != 'campus' && type != 'unity' && type != 'department') {
@@ -115,16 +130,18 @@ class ProductController {
           return product
         }else{
           const product = await Product.query()
-                                        .whereRaw(`${type} LIKE '%${subtype}%' AND name LIKE '%${name}%'`)
-                                        .with('category')
-                                        .with('images')
-                                        .with('category')
-                                        .with('subcategory')
-                                        .with('user.center')
-                                        .orderBy('created_at', 'desc')
-                                        .paginate(page, perPage) 
-          return product
+                                      .whereRaw(`${type} LIKE '%${subtype}%' AND name LIKE '%${name}%'`)
+                                      .with('category')
+                                      .with('images')
+                                      .with('category')
+                                      .with('subcategory')
+                                      .with('user.center')
+                                      .orderBy('created_at', 'desc')
+                                      .paginate(page, perPage) 
+        return product
         }
+        
+        
       break;
     }
   }
@@ -179,7 +196,7 @@ class ProductController {
     try {
       await auth.check();
     } catch (error) {
-      
+      console.log(error);
     }
     if (product == null) {
       //Se o produto nao for encontrado
@@ -219,7 +236,8 @@ class ProductController {
   }
 
   //Rota para exibir produtos já cadastrados
-  async historic({response, auth}){
+  async historic({request, response, auth}){
+    const {page = 1, perPage = 10} = request.get();
 
     if (auth.user == null) {
       return response.json({"message":"You must be authenticated"});
@@ -232,7 +250,7 @@ class ProductController {
                                   .with('category')
                                   .with('subcategory')
                                   .orderBy('created_at', 'desc')
-                                  .fetch()
+                                  .paginate(page, perPage) 
 
     return  products;
   }

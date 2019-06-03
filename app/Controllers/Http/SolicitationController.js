@@ -19,8 +19,10 @@ class SolicitationController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index ({auth}) {
-    const sols = await Solicitation.query().where({user_id: auth.user.id, status: 1}).with('user').with('product.user').fetch();
+  async index ({request, auth}) {
+    const {page=1, perPage=10} = request.get();
+
+    const sols = await Solicitation.query().where({user_id: auth.user.id, status: 1}).with('user').with('product.user').paginate(page, perPage);
     return sols;
   }
 
