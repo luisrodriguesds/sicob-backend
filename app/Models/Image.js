@@ -10,7 +10,7 @@ class Image extends Model {
   }
 
   getUrl({path}){
-    return `${Env.get('HOST')}/api/images/${path}`
+    return `${Env.get('HOST_URL')}/api/images/${path}`
   }
 
   product(){
