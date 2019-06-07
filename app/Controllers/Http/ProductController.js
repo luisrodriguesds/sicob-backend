@@ -120,6 +120,8 @@ class ProductController {
           return response.status(406).json({"message":"The variable type is not inside of the pattern"})
         }
 
+        
+
         if (name == null) {
           const product = await Product.query()
                                         .whereRaw(`${type} LIKE '%${subtype}%'`)
