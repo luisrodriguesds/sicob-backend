@@ -9,10 +9,11 @@ const Hash          = use('Hash')
 const Mail          = use('Mail');
 class UserController {
     
-    async index(){
-        const users = await User.query().with('center').fetch();
+    async index({request}){
+        const {page = 1, perPage = 10} = request.all();
+        const users = await User.query().with('center').paginate(page, perPage);
         
-        return users.toJSON();
+        return users;
     }
     
     async show({params}){
