@@ -15,7 +15,7 @@ class ImageController {
     const images = request.file('image', {types:['image'], size:'2mb'})
 
     await images.moveAll(Helpers.tmpPath('uploads'), file => ({
-      name: `${Date.now()}-${Math.floor(Math.random()*100000000)}`
+      name: `${Date.now()}-${Math.floor(Math.random()*100000000)}.${file.extname}`
     }))
 
     if (!images.movedAll()) {
