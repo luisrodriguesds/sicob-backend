@@ -17,8 +17,8 @@
 
 const Route = use('Route')
 
-Route.get('/api/wc', ({response, request}) => {
-  return response.json({"message":"bem vindo ao adonis com docker!"})
+Route.get('/api', ({response, request}) => {
+  return response.json({"message":"API it's working!"})
 });
 
 //Users

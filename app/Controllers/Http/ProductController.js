@@ -158,8 +158,10 @@ class ProductController {
    * @param {Response} ctx.response
    */
   async store ({ request, auth, response }) {
-    const data = request.only(['name', 'description', 'num_patrimony', 'category_id', 'subcategory_id', 'address', 'latitude', 'longitude', 'campus', 'unity', 'department']);
-    //Exibiir seus próprios produtos 
+    const data = request.only(['name', 'description', 'num_patrimony', 'category_id', 'subcategory_id', 'address', 'campus', 'unity', 'department']);
+    const {latitude = 0, longitude = 0} = request.all();
+    
+    //Exibiir seus próprios produtos
     //if exist category
     const cat = await Category.findBy('id', data.category_id)
     if (cat == null) {
@@ -177,7 +179,7 @@ class ProductController {
       return response.status(406).json({"message":"Subcategory don't belongs to this category"})      
     }
 
-    const product = await Product.create({...data, user_id: auth.user.id})
+    const product = await Product.create({...data, user_id: auth.user.id, latitude, longitude})
 
     return product;
   }
