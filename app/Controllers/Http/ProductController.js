@@ -22,10 +22,9 @@ class ProductController {
    */
   //Rota para exibir produtos na página inicial
   async index ({ request, params }) {
-    const {latitude = undefined, longitude = undefined} = request.all();
-    const {page=1, perPage=10} = request.get();
-
-    //if the user's location is 
+    const {latitude = undefined, longitude = undefined, page=1, perPage=10} = request.all();
+   
+   ///if the user's location is 
     if (latitude != undefined || longitude != undefined) {
       const products = await Product
                                   .query()
@@ -56,8 +55,7 @@ class ProductController {
   //Rota para diversos filtros
   async search({request, response, params}){
     //Liste dos produtos de cada tipo
-    const {name, type, subtype} = request.all()
-    const {page=1, perPage=10} = request.get();
+    const {name, type, subtype, page=1, perPage=10} = request.all()
 
     //Dois caminho, categoria ou nao
     switch (type) {
@@ -69,17 +67,24 @@ class ProductController {
       case 'date':
         if (name == null) {
           const product = await Product.query()
-                                        .whereRaw(`created_at BETWEEN '${subtype}' AND '${subtype}-23:59:59.999'`)
+                                        .whereRaw(`created_at BETWEEN '${subtype.begin}' AND '${subtype.end}-23:59:59.999'`)
                                         .with('category')
                                         .with('images')
-                                        .with('category')
                                         .with('subcategory')
                                         .with('user.center')
                                         .orderBy('created_at', 'desc')
                                         .paginate(page, perPage)
           return product;
         }else{
-
+          const product = await Product.query()
+                                        .whereRaw(`created_at BETWEEN '${subtype.begin}' AND '${subtype.end}-23:59:59.999' AND name LIKE '%${name}%'`)
+                                        .with('category')
+                                        .with('images')
+                                        .with('subcategory')
+                                        .with('user.center')
+                                        .orderBy('created_at', 'desc')
+                                        .paginate(page, perPage)
+          return product;
         }
       break;
       case 'location':
@@ -91,7 +96,6 @@ class ProductController {
                                         .whereRaw(`category_id = '${subtype}'`)
                                         .with('category')
                                         .with('images')
-                                        .with('category')
                                         .with('subcategory')
                                         .with('user.center')
                                         .orderBy('created_at', 'desc')
@@ -102,7 +106,6 @@ class ProductController {
                                       .whereRaw(`category_id = '${subtype}' AND name LIKE '%${name}%'`)
                                       .with('category')
                                       .with('images')
-                                      .with('category')
                                       .with('subcategory')
                                       .with('user.center')
                                       .orderBy('created_at', 'desc')
@@ -117,12 +120,13 @@ class ProductController {
           return response.status(406).json({"message":"The variable type is not inside of the pattern"})
         }
 
+        
+
         if (name == null) {
           const product = await Product.query()
                                         .whereRaw(`${type} LIKE '%${subtype}%'`)
                                         .with('category')
                                         .with('images')
-                                        .with('category')
                                         .with('subcategory')
                                         .with('user.center')
                                         .orderBy('created_at', 'desc')
@@ -133,7 +137,6 @@ class ProductController {
                                       .whereRaw(`${type} LIKE '%${subtype}%' AND name LIKE '%${name}%'`)
                                       .with('category')
                                       .with('images')
-                                      .with('category')
                                       .with('subcategory')
                                       .with('user.center')
                                       .orderBy('created_at', 'desc')
@@ -155,8 +158,10 @@ class ProductController {
    * @param {Response} ctx.response
    */
   async store ({ request, auth, response }) {
-    const data = request.only(['name', 'description', 'num_patrimony', 'category_id', 'subcategory_id', 'address', 'latitude', 'longitude', 'campus', 'unity', 'department']);
-    //Exibiir seus próprios produtos 
+    const data = request.only(['name', 'description', 'num_patrimony', 'category_id', 'subcategory_id', 'address', 'campus', 'unity', 'department']);
+    const {latitude = 0, longitude = 0 } = request.all();
+    
+    //Exibiir seus próprios produtos
     //if exist category
     const cat = await Category.findBy('id', data.category_id)
     if (cat == null) {
@@ -174,7 +179,7 @@ class ProductController {
       return response.status(406).json({"message":"Subcategory don't belongs to this category"})      
     }
 
-    const product = await Product.create({...data, user_id: auth.user.id})
+    const product = await Product.create({...data, user_id: auth.user.id, latitude, longitude})
 
     return product;
   }

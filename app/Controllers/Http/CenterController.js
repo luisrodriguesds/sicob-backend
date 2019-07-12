@@ -21,7 +21,8 @@ class CenterController {
    * @param {View} ctx.view
    */
   async index ({ request, response, view }) {
-    const centers = await Center.query().with('user').fetch();
+    const {page = 1, perPage = 10} = request.all();
+    const centers = await Center.query().with('user').paginate(page, perPage);
     return centers;
   }
 
