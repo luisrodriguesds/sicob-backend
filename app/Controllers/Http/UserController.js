@@ -132,8 +132,8 @@ class UserController {
     }
 
     async authentication({request, auth}){
-        const {username, password} = request.all();
-        const token = await auth.attempt(username, password);
+        const {email, password} = request.all();
+        const token = await auth.attempt(email, password);
         return token;
     }
 
