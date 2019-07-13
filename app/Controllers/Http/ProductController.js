@@ -159,7 +159,8 @@ class ProductController {
    */
   async store ({ request, auth, response }) {
     const data = request.only(['name', 'description', 'num_patrimony', 'category_id', 'subcategory_id', 'address', 'campus', 'unity', 'department']);
-    const {latitude = 0, longitude = 0} = request.all();
+
+    const {latitude = 0, longitude = 0 } = request.all();
     
     //Exibiir seus próprios produtos
     //if exist category

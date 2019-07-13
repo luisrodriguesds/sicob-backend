@@ -24,9 +24,9 @@ Route.get('/api', ({response, request}) => {
 //Users
 Route.group(()=>{
   Route.get('/api/user', 'UserController.index').middleware(['auth', 'ManagerCustom']);
+  Route.get('/api/user/logout', 'UserController.logout').middleware(['auth']);
   Route.get('/api/user/show/:id', 'UserController.show').middleware(['auth', 'OwnerOrManager']);
   Route.get('/api/user/token', 'UserController.token').middleware(['auth']);
-  Route.get('/api/user/logout', 'UserController.logout').middleware(['auth']);
   
   Route.get('/api/user/profilephoto/:path', 'UserController.showProfilephoto');
   Route.post('/api/user/profilephoto/:id', 'UserController.profilephoto').middleware(['auth', 'OwnerOrManager']);
