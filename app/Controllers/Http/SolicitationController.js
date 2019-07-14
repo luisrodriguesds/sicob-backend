@@ -4,6 +4,8 @@
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
+/**O status pode ser 0(Recusado), 1(Em Análise), 2(aprovada) */
+
 const Solicitation = use('App/Models/Solicitation')
 const Product = use('App/Models/Product')
 /**
@@ -19,10 +21,10 @@ class SolicitationController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index ({request, auth}) {
+  async index ({request}) {
     const {page=1, perPage=10} = request.all();
 
-    const sols = await Solicitation.query().where({user_id: auth.user.id, status: 1}).with('user').with('product.user').paginate(page, perPage);
+    const sols = await Solicitation.query().where({status: 1}).with('user').with('product.user').paginate(page, perPage);
     return sols;
   }
 
@@ -42,19 +44,21 @@ class SolicitationController {
     if (product == null) {
       return response.status(406).json({"message":"Product not found"});
     }else if (sol_product.rows.length > 0) {
-      //Verifcar se status é o status do solicitacao é igual a 2, se for, só troca o status, se nao, a solicitação já existe
-      if (sol_product.rows[0].status == 2 || sol_product.rows[0].status == 0) {
+      //Verifcar se o status da solicitacao é igual a 0, se for, só troca o status, se nao, a solicitação já existe
+      if (sol_product.rows[0].status == 0) {
         await Solicitation.query().whereRaw(`product_id = '${data.product_id}' AND user_id = '${auth.user.id}'`).update({status: 1});
         await Product.query().where('id', '=', sol_product.rows[0].product_id).update({status: 2});        
         sol_product.rows[0].status = 1;
         return sol_product;
       }else{
-        //O status pode ser 0(Recusado), 1(Já existe), 3(Aprovada)
+        //O status pode ser 0(Recusado), 1(Em análise), 2(Aprovada)
         switch (sol_product.rows[0].status) {
+          case 0:
+            return response.status(406).json({"message":"This solicitation was refused"});
           case 1:
             return response.status(406).json({"message":"This solicitation already exist"});
           break;
-          case 3:
+          case 2:
             return response.status(406).json({"message":"This solicitation already was approved"});
           break;
           default:
@@ -133,11 +137,11 @@ class SolicitationController {
         await Product.query().where('id', '=', sol.product_id).update({status: 1});
         return sol;
       break;
-      case "3":
-        //Solicitacao atendida, status do produto muda para 0
+      case "2":
+        //Solicitacao atendida, status do produto muda para 3 (compartilhado)
         sol.status = status;
         await sol.save();
-        await Product.query().where('id', '=', sol.product_id).update({status: 0});
+        await Product.query().where('id', '=', sol.product_id).update({status: 3});
         return sol;
       break;
       default:
@@ -156,16 +160,24 @@ class SolicitationController {
    */
 
   async destroy ({ params, auth, request, response }) {
-    //Usuario desistiu do produto, nao excluir solicitacao, mudar seu status para 2, caso solicite o mesmo produto, nao criar novamente, só mudar esse status
-    //Status do produto volta para 1
+    /**Usuario desistiu do produto ou O Dono do produto recusou a solicitação
+     * nao excluir solicitacao, mudar seu status para 0,
+     * caso solicite o mesmo produto, nao criar novamente, só mudar esse status
+     * Status do produto volta para 1 (disponível) */
+     
     const sol = await Solicitation.findBy('id', params.id);
+    const product = await Product.query().where('id', '=', sol.product_id).with('user').fetch();
+    const productJSON = JSON.parse(JSON.stringify(product));
+    
+    console.log(auth.user.id, productJSON[0].user_id );
     if (sol == null) {
       return response.status(406).json({"message":"Solicitation not found"})
     }
-    if (auth.user.id != sol.user_id) {
+
+    if (auth.user.id != sol.user_id && auth.user.id != productJSON[0].user_id) {
       return response.status(406).json({"message":"You aren't the owner of this solicitation"})
     }else{
-      sol.status = 2;
+      sol.status = 0;
       await sol.save();
       await Product.query().where('id', '=', sol.product_id).update({status: 1});
       return true;

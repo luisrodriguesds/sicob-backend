@@ -4,6 +4,9 @@
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
+/** Status do produto: 
+ * 0: Excluido ; 1: disponível ; 2: solicitado ; 3: compartilhado*/
+
 const Product = use('App/Models/Product')
 const Category = use('App/Models/Category')
 const Subcategory = use('App/Models/Subcategory')
@@ -197,7 +200,7 @@ class ProductController {
 
   //Rota para exibir a página unica do produto
   async show ({ params, auth, response }) {
-    //Exibir se status = 1, se nao verificar se é dono do produto ou se é solicitadando do produto
+    //Exibir se status = 1, se nao verificar se é dono do produto ou se é solicitante do produto
     const product = await Product.findBy('id', params.id);
     try {
       await auth.check();
@@ -226,7 +229,7 @@ class ProductController {
       await product.load('solicitation')
       return product
     }else{
-      //Caso nao seja dono do produto, mas seja o solicitadando, pode exibir o produto independente do status
+      //Caso nao seja dono do produto, mas seja o solicitante, pode exibir o produto independente do status
       await product.load('solicitation')
       const jsonProd = JSON.parse(JSON.stringify(product))
       if (product.solicitation != null && jsonProd.solicitation[0].user_id == auth.user.id) {
@@ -241,24 +244,23 @@ class ProductController {
     }
   }
 
-  //Rota para exibir produtos já cadastrados
+  //Rota para exibir produtos já cadastrados com status 1(disponivel) ou status 2(solicitado)
   async historic({request, response, auth}){
     const {page = 1, perPage = 10} = request.get();
 
     if (auth.user == null) {
       return response.json({"message":"You must be authenticated"});
-    }
+    } 
+    const product = await Product.query()
+                                      .whereRaw(`user_id = '${auth.user.id}' AND (status = '1' OR status = '2')`)
+                                      .with('category')
+                                      .with('images')
+                                      .with('subcategory')
+                                      .with('user.center')
+                                      .orderBy('created_at', 'desc')
+                                      .paginate(page, perPage)                                  
+    return product
 
-    const products = await Product.query()
-                                  .where({user_id: auth.user.id})
-                                  .with('user.center')
-                                  .with('images')
-                                  .with('category')
-                                  .with('subcategory')
-                                  .orderBy('created_at', 'desc')
-                                  .paginate(page, perPage) 
-
-    return  products;
   }
 
   /**
@@ -322,13 +324,17 @@ class ProductController {
     if (product == null) {
       return response.status(406).json({"message":"Product not found"})
     }
-
     //if producut belongs to owner or if the user is manager
-    if (auth.user.id == product.user_id || auth.user.type == 'Gerente') {
-      await product.delete();
-      return response.status(200).json();
-    }else{
-      return response.status(406).json({"message":"You don't have permission"})
+    if (product.status == 2){
+      return response.status(406).json({"message":"You can't remove this product. You must remove the solicitation first"})
+    }
+    else{ 
+      if (auth.user.id == product.user_id || auth.user.type == 'Gerente') {
+        await product.delete();
+        return response.status(200).json();
+      }else{
+        return response.status(406).json({"message":"You don't have permission"})
+      }
     }
   }
 }
