@@ -38,6 +38,7 @@ Route.group(()=>{
   Route.post('/api/auth', 'UserController.authentication');
   Route.get('/api/user/requestNewPass/:email', 'UserController.requestNewPass');
   Route.post('/api/user/setNewPass/', 'UserController.setNewPass');
+  Route.put('/api/user/contact/:id', 'UserController.updateContact').middleware(['auth']);
 });
 
 //Centro
@@ -88,7 +89,8 @@ Route.group(() => {
 
 //Solicitations
 Route.group(()=>{
-  Route.get('/api/solicitation', 'SolicitationController.index').middleware(['auth']);
+  Route.get('/api/solicitation', 'SolicitationController.index')
+  // Route.get('/api/solicitation', 'SolicitationController.index').middleware(['auth']);
   Route.post('/api/solicitation', 'SolicitationController.store').middleware(['auth']);
   Route.get('/api/solicitation/:product_id', 'SolicitationController.show');  //Show all soliciation of this produtc
   Route.get('/api/solicitation/:product_id/:user_id', 'SolicitationController.show');  // Show just unique solicitation

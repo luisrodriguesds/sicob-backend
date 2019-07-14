@@ -154,6 +154,19 @@ class UserController {
         return user;
     }
 
+    //Update contact (email)
+    async updateContact({request, response, params}){
+        const user = await User.findBy('id', params.id);
+        if (user == null) {
+            return response.send({"messager":"User not found"});
+        }
+
+        const data = request.only(['email'])        
+        user.merge(data);
+        await user.save();
+        return user;
+    }
+
     async delete({response, params}){
         const user = await User.findBy('id', params.id);
         if (user == null) {
@@ -213,6 +226,7 @@ class UserController {
         await req.delete();
         return user;
     }
+    
 
 
 }
