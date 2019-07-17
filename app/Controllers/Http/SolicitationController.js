@@ -21,11 +21,16 @@ class SolicitationController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index ({request}) {
-    const {page=1, perPage=10} = request.all();
-
-    const sols = await Solicitation.query().where({status: 1}).with('user').with('product.user').paginate(page, perPage);
-    return sols;
+  async index ({ request }) {
+    const {page=1, perPage=10, status=undefined} = request.all();
+    if (status !== undefined) {
+      const sols = await Solicitation.query().where({status: status}).with('user').with('product.user').paginate(page, perPage);
+      return sols;
+    }
+    else {
+      const sols = await Solicitation.query().with('user').with('product.user').paginate(page, perPage);
+      return sols;
+    }
   }
 
   /**
@@ -40,7 +45,7 @@ class SolicitationController {
     const data  = request.only(['product_id']);
     const product     = await Product.findBy('id', data.product_id);
     const sol_product = await Solicitation.query().whereRaw(`product_id = '${data.product_id}' AND user_id = '${auth.user.id}'`).fetch();
-    
+
     if (product == null) {
       return response.status(406).json({"message":"Product not found"});
     }else if (sol_product.rows.length > 0) {
@@ -51,6 +56,7 @@ class SolicitationController {
         sol_product.rows[0].status = 1;
         return sol_product;
       }else{
+        console.log(sol_product.rows[0].status)
         //O status pode ser 0(Recusado), 1(Em análise), 2(Aprovada)
         switch (sol_product.rows[0].status) {
           case 0:
@@ -102,6 +108,36 @@ class SolicitationController {
       const sol = await Solicitation.query().whereRaw(`product_id = '${product_id}' AND user_id = '${user_id}'`).with('user').with('product.user').fetch();
       return sol;
     }
+  }
+  /**
+   * Retorna todas as solicitações de um determinado user
+   */
+
+  async historicAll({request, response, auth}){
+    const {page = 1, perPage = 10} = request.get();
+
+    if (auth.user == null) {
+      return response.json({"message":"You must be authenticated"});
+    } 
+    // const solicitation = await Solicitation.query()
+    //                                   .with('product')
+    //                                   .whereRaw(`product.user_id = '${auth.user.id}' `)
+    //                                   .orderBy('created_at', 'desc')
+    //                                   .paginate(page, perPage)       
+    const solicitation = await Solicitation.query()
+    .with('product')
+    .where((builder) => {
+      // if (v.search) {
+          builder
+              // .where('tickets.title', 'LIKE', '%' + v.search + '%')
+              // .orWhere('tickets.message', 'LIKE', '%' + v.search + '%')
+              .where('product.user_id', auth.user.id)
+              // .orWhere('tickets.message', 'LIKE', '%' + v.search + '%')
+      // }
+    })
+    .paginate(page, perPage)                           
+    return solicitation
+
   }
 
 
