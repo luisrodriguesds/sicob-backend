@@ -263,6 +263,25 @@ class ProductController {
 
   }
 
+  //Rota para exibir todos  os produtos do usuário
+  async historicAll({request, response, auth}){
+    const {page = 1, perPage = 10} = request.get();
+
+    if (auth.user == null) {
+      return response.json({"message":"You must be authenticated"});
+    } 
+    const product = await Product.query()
+                                      .whereRaw(`user_id = '${auth.user.id}'`)
+                                      .with('category')
+                                      .with('images')
+                                      .with('subcategory')
+                                      .with('user.center')
+                                      .orderBy('created_at', 'desc')
+                                      .paginate(page, perPage)                                  
+    return product
+
+  }
+
   /**
    * Update product details.
    * PUT or PATCH products/:id
