@@ -115,32 +115,35 @@ class SolicitationController {
 
   async historicAll({request, response, auth}){
     const {page = 1, perPage = 10} = request.get();
-
+    
     if (auth.user == null) {
       return response.json({"message":"You must be authenticated"});
     } 
-    // const solicitation = await Solicitation.query()
-    //                                   .with('product')
-    //                                   .whereRaw(`product.user_id = '${auth.user.id}' `)
-    //                                   .orderBy('created_at', 'desc')
-    //                                   .paginate(page, perPage)       
+
     const solicitation = await Solicitation.query()
-    .with('product')
-    .where((builder) => {
-      // if (v.search) {
-          builder
-              // .where('tickets.title', 'LIKE', '%' + v.search + '%')
-              // .orWhere('tickets.message', 'LIKE', '%' + v.search + '%')
-              .where('product.user_id', auth.user.id)
-              // .orWhere('tickets.message', 'LIKE', '%' + v.search + '%')
-      // }
+    .select([
+      'solicitations.*',
+      'products.id AS product_id',
+    ])
+    .innerJoin('products', function () {
+      this
+      .on('solicitations.product_id', 'products.id')
     })
-    .paginate(page, perPage)                           
+    .where('solicitations.user_id', auth.user.id)
+    .orWhere('products.user_id', auth.user.id)
+    .with('product')
+    .paginate(page, perPage)
+    
     return solicitation
-
+    
   }
-
-
+  
+  // 'solicitations.id as solicitation_id ',
+  // 'solicitations.user_id as solicitation_user_id',
+  // 'solicitations.product_id as solicitation_product_id',
+  // 'solicitations.status as solicitation_status',
+  // 'solicitations.updated_at as solicitation_updated_at',
+  
   /**
    * Update solicitation details.
    * PUT or PATCH solicitations/:id
