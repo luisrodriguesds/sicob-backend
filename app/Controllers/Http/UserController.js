@@ -33,7 +33,7 @@ class UserController {
     }
 
     async create({request, response}){
-        const data = request.only(['username', 'name', 'address', 'id_center', 'website', 'type', 'email', 'password'])
+        const data = request.only(['username', 'name', 'address', 'id_center', 'website', 'type', 'email', 'phone', 'password'])
         
         //Verificar se o centro existe
         //Verificar se o centro passado existe
@@ -148,7 +148,7 @@ class UserController {
             return response.send({"messager":"User not found"});
         }
 
-        const data = request.only(['username', 'name', 'address', 'id_center', 'website', 'type', 'email', 'password'])        
+        const data = request.only(['username', 'name', 'address', 'id_center', 'website', 'type', 'email', 'phone', 'password'])        
         user.merge(data);
         await user.save();
         return user;
