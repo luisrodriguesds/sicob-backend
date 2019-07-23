@@ -110,7 +110,7 @@ class SolicitationController {
     }
   }
   /**
-   * Retorna todas as solicitações de um determinado user
+   * Retorna todas as solicitações (recebidas e feitas) de um determinado user
    */
 
   async historicAll({request, response, auth}){
@@ -132,17 +132,12 @@ class SolicitationController {
     .where('solicitations.user_id', auth.user.id)
     .orWhere('products.user_id', auth.user.id)
     .with('product')
+    .with('user')
     .paginate(page, perPage)
     
     return solicitation
     
   }
-  
-  // 'solicitations.id as solicitation_id ',
-  // 'solicitations.user_id as solicitation_user_id',
-  // 'solicitations.product_id as solicitation_product_id',
-  // 'solicitations.status as solicitation_status',
-  // 'solicitations.updated_at as solicitation_updated_at',
   
   /**
    * Update solicitation details.
