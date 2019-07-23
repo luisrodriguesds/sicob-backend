@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+body{
+	font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;
+}
+
+#header{
+	
+	background-color: #76ABDC;
+    color: white;
+    text-align: center;
+    padding: 2px;
+}
+
+#text{
+    padding: 15px;
+}
+
+#footer{
+    text-align: center;
+	padding-top: 15px;
+}
+
+a {
+  text-decoration: none;
+  color: white !important ;
+}
+
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+th, td {
+  padding: 15px;
+  text-align: left;
+}
+table#t01 {
+  width: 100%;    
+  background-color: #fff;
+}
+</style>
+</head>
+<body>
+<div id="header">
+<a href="www.sicob.ufc.br">
+	<h2>SICOB</h2>
+    <p><strong>Sistema de Compartilhamento de Bens</strong></p>
+</a>
+</div>
+
+<div id="text">
+  <strong>Olá,</strong>
+  <br>
+  Você recebeu uma solicitação para o seguinte produto:
+</div>
+
+<table id="t01">
+  <tr>
+    <th>ID</th>
+    <th>PRODUTO</th> 
+  </tr>
+  <tr>
+    <td>{{id}}</td>
+    <td>{{name}}</td>
+  </tr>
+</table>
+
+<div id="footer">
+  <p>
+      <strong style="color: green">Compartilhe e torne a UFC mais SUSTENTÁVEL</strong>
+  </p>
+<div>
+
+</body>
+</html>

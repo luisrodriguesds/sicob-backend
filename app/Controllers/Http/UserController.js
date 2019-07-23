@@ -18,6 +18,7 @@ class UserController {
     
     async show({params}){
         const user = await User.findBy('id', params.id);
+
         try {
             user.load('center');
         } catch (error) {
@@ -134,6 +135,7 @@ class UserController {
     async authentication({request, auth}){
         const {username, password} = request.all();
         const token = await auth.attempt(username, password);
+
         return token;
     }
 
@@ -151,6 +153,7 @@ class UserController {
         const data = request.only(['username', 'name', 'address', 'id_center', 'website', 'type', 'email', 'phone', 'password'])        
         user.merge(data);
         await user.save();
+
         return user;
     }
 
@@ -190,7 +193,7 @@ class UserController {
     async setNewPass({request, response}){
         const {token, password}  = request.only(['token', 'password']);
         const data = {password};
-        const req   = await RequestPass.findBy('key', token);
+        const req = await RequestPass.findBy('key', token);
 
         if (req == null) {
             return response.status(406).json({"message":"Token not found"})            
@@ -204,7 +207,7 @@ class UserController {
         if (dif >= 2) {
             return response.status(406).json({"message":"Invalid token"})         
         }
-        console.log(req.user_id);
+        // console.log(req.user_id);
         const user = await User.findBy('id', req.user_id);
         user.merge(data);
         await user.save();

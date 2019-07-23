@@ -6,8 +6,10 @@
 
 /**O status pode ser 0(Recusado), 1(Em Análise), 2(aprovada) */
 
-const Solicitation = use('App/Models/Solicitation')
-const Product = use('App/Models/Product')
+const Solicitation  = use('App/Models/Solicitation')
+const Product       = use('App/Models/Product')
+const User          = use('App/Models/User')
+const Mail          = use('Mail');
 /**
  * Resourceful controller for interacting with solicitations
  */
@@ -54,6 +56,16 @@ class SolicitationController {
         await Solicitation.query().whereRaw(`product_id = '${data.product_id}' AND user_id = '${auth.user.id}'`).update({status: 1});
         await Product.query().where('id', '=', sol_product.rows[0].product_id).update({status: 2});        
         sol_product.rows[0].status = 1;
+
+        const user  = await User.findBy('id', product.user_id);
+
+        await Mail.send('emails.newSolicitation', product.toJSON(), (message) => {
+          message
+              .to(user.email)
+              .from('<from-email>')
+              .subject('SICOB - UFC | Nova solicitação')
+          });
+
         return sol_product;
       }else{
         console.log(sol_product.rows[0].status)
@@ -80,8 +92,16 @@ class SolicitationController {
 
     const sol = Solicitation.create({...data, user_id: auth.user.id});
 
-    //Mudar status do produto e enviar email para o dono do produto
-    // ..
+    const user  = await User.findBy('id', product.user_id);
+
+    //Enviar email para o dono do produto
+
+    await Mail.send('emails.newSolicitation', product.toJSON(), (message) => {
+      message
+          .to(user.email)
+          .from('<from-email>')
+          .subject('SICOB - UFC | Nova solicitação')
+      });
     
     //Mudar o status do produto
     await Product.query().where('id', '=', data.product_id).update({status: 2});        
