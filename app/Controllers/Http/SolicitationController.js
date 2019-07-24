@@ -47,7 +47,7 @@ class SolicitationController {
     const data  = request.only(['product_id']);
     const product     = await Product.findBy('id', data.product_id);
     const sol_product = await Solicitation.query().whereRaw(`product_id = '${data.product_id}' AND user_id = '${auth.user.id}'`).fetch();
-
+    const user  = await User.findBy('id', product.user_id);
 
     if (product == null) {
       return response.status(406).json({"message":"Product not found"});
@@ -58,7 +58,7 @@ class SolicitationController {
         await Product.query().where('id', '=', sol_product.rows[0].product_id).update({status: 2});        
         sol_product.rows[0].status = 1;
 
-        const user  = await User.findBy('id', product.user_id);
+        
 
         await Mail.send('emails.newSolicitation', {user, product, auth}, (message) => {
           message
@@ -70,7 +70,7 @@ class SolicitationController {
         return sol_product;
       }else{
         console.log(sol_product.rows[0].status)
-        //O status pode ser 0(Recusado), 1(Em análise), 2(Aprovada)
+        //O status pode ser 0(Recusada), 1(Em análise), 2(Aprovada)
         switch (sol_product.rows[0].status) {
           case 0:
             return response.status(406).json({"message":"This solicitation was refused"});
@@ -93,16 +93,14 @@ class SolicitationController {
 
     const sol = Solicitation.create({...data, user_id: auth.user.id});
 
-    const user  = await User.findBy('id', product.user_id);
-
     //Enviar email para o dono do produto
 
-    // await Mail.send('emails.newSolicitation', product.toJSON(), (message) => {
-    //   message
-    //       .to(user.email)
-    //       .from('<from-email>')
-    //       .subject('SICOB - UFC | Nova solicitação')
-    //   });
+    await Mail.send('emails.newSolicitation', {user, product, auth}, (message) => {
+      message
+          .to(user.email)
+          .from('<from-email>')
+          .subject('SICOB - UFC | Nova solicitação')
+      });
     
     //Mudar o status do produto
     await Product.query().where('id', '=', data.product_id).update({status: 2});        
@@ -196,12 +194,12 @@ class SolicitationController {
         await sol.save();
         await Product.query().where('id', '=', sol.product_id).update({status: 1});
 
-        // await Mail.send('emails.refusedSolicitation', product.toJSON(), (message) => {
-        //   message
-        //       .to(user.email)
-        //       .from('<from-email>')
-        //       .subject('SICOB - UFC | Solicitação Recusada')
-        //   });
+        await Mail.send('emails.refusedSolicitation', {user_solicitation, productJSON}, (message) => {
+          message
+              .to(user.email)
+              .from('<from-email>')
+              .subject('SICOB - UFC | Solicitação Recusada')
+          });
 
         return sol;
       break;
