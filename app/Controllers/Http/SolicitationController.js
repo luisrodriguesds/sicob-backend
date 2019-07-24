@@ -48,10 +48,11 @@ class SolicitationController {
     const product     = await Product.findBy('id', data.product_id);
     const sol_product = await Solicitation.query().whereRaw(`product_id = '${data.product_id}' AND user_id = '${auth.user.id}'`).fetch();
 
+
     if (product == null) {
       return response.status(406).json({"message":"Product not found"});
     }else if (sol_product.rows.length > 0) {
-      //Verifcar se o status da solicitacao é igual a 0, se for, só troca o status, se nao, a solicitação já existe
+      //Verifcar se o status da solicitacao é igual a 0. Se sim, só troca o status; se nao, a solicitação já existe
       if (sol_product.rows[0].status == 0) {
         await Solicitation.query().whereRaw(`product_id = '${data.product_id}' AND user_id = '${auth.user.id}'`).update({status: 1});
         await Product.query().where('id', '=', sol_product.rows[0].product_id).update({status: 2});        
@@ -59,7 +60,7 @@ class SolicitationController {
 
         const user  = await User.findBy('id', product.user_id);
 
-        await Mail.send('emails.newSolicitation', product.toJSON(), (message) => {
+        await Mail.send('emails.newSolicitation', {user, product, auth}, (message) => {
           message
               .to(user.email)
               .from('<from-email>')
@@ -96,12 +97,12 @@ class SolicitationController {
 
     //Enviar email para o dono do produto
 
-    await Mail.send('emails.newSolicitation', product.toJSON(), (message) => {
-      message
-          .to(user.email)
-          .from('<from-email>')
-          .subject('SICOB - UFC | Nova solicitação')
-      });
+    // await Mail.send('emails.newSolicitation', product.toJSON(), (message) => {
+    //   message
+    //       .to(user.email)
+    //       .from('<from-email>')
+    //       .subject('SICOB - UFC | Nova solicitação')
+    //   });
     
     //Mudar o status do produto
     await Product.query().where('id', '=', data.product_id).update({status: 2});        
@@ -177,10 +178,15 @@ class SolicitationController {
     //O usuário que estiver logado é que será o responsável por mudar o status
     const product = await Product.query().where('id', '=', sol.product_id).with('user').fetch();
     const productJSON = JSON.parse(JSON.stringify(product));
+    const user_solicitation = await User.findBy('id', sol.user_id);
     
     if (productJSON[0].user.id != auth.user.id) {
       return response.status(406).json({"message":"You aren't the owner of this product"});
     }
+
+    
+    //>>>>>>>>>>>            O case 0 está sendo utilizado???? <<<<<<<<<<<<<<<
+
 
     switch (status) {
       case "0":
@@ -189,6 +195,14 @@ class SolicitationController {
         sol.status = status;
         await sol.save();
         await Product.query().where('id', '=', sol.product_id).update({status: 1});
+
+        // await Mail.send('emails.refusedSolicitation', product.toJSON(), (message) => {
+        //   message
+        //       .to(user.email)
+        //       .from('<from-email>')
+        //       .subject('SICOB - UFC | Solicitação Recusada')
+        //   });
+
         return sol;
       break;
       case "2":
@@ -196,6 +210,14 @@ class SolicitationController {
         sol.status = status;
         await sol.save();
         await Product.query().where('id', '=', sol.product_id).update({status: 3});
+
+        await Mail.send('emails.acceptedSolicitation', {user_solicitation, productJSON}, (message) => {
+          message
+              .to(user_solicitation.email)
+              .from('<from-email>')
+              .subject('SICOB - UFC | Solicitação Atendida')
+          });
+
         return sol;
       break;
       default:
@@ -222,8 +244,10 @@ class SolicitationController {
     const sol = await Solicitation.findBy('id', params.id);
     const product = await Product.query().where('id', '=', sol.product_id).with('user').fetch();
     const productJSON = JSON.parse(JSON.stringify(product));
+
+    const user_solicitation = await User.findBy('id', sol.user_id);
     
-    console.log(auth.user.id, productJSON[0].user_id );
+    // console.log(auth.user.id, productJSON[0].user_id );
     if (sol == null) {
       return response.status(406).json({"message":"Solicitation not found"})
     }
@@ -234,6 +258,16 @@ class SolicitationController {
       sol.status = 0;
       await sol.save();
       await Product.query().where('id', '=', sol.product_id).update({status: 1});
+
+      console.log("passou aqui")
+
+      await Mail.send('emails.refusedSolicitation', {user_solicitation, productJSON}, (message) => {
+          message
+              .to(user_solicitation.email)
+              .from('<from-email>')
+              .subject('SICOB - UFC | Solicitação Recusada')
+          });
+
       return true;
     }
   }
