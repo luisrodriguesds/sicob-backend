@@ -29,6 +29,10 @@ a {
   color: white !important ;
 }
 
+#warning {
+	color: red;
+}
+
 table, th, td {
   border: 1px solid black;
   border-collapse: collapse;
@@ -52,9 +56,9 @@ table#t01 {
 </div>
 
 <div id="text">
-  <strong>Olá, {{user.name}}</strong>
+  <strong>Olá, {{user_solicitation.name}}</strong>
   <br>
-  Você recebeu uma solicitação para o seguinte produto:
+  Sua solicitação foi <label style="color: green; font-weight: bold;">recusada/excluída</label>
 </div>
 
 <table id="t01">
@@ -62,13 +66,13 @@ table#t01 {
     <th>ID</th>
     <th>PRODUTO</th>
     <th>DESCRIÇÃO</th>
-    <th>SOLICITANTE</th> 
+    <th>RESPONSÁVEL</th>
   </tr>
   <tr>
-    <td>{{product.id}}</td>
-    <td>{{product.name}}</td>
-    <td>{{product.description}}</td>
-    <td>{{auth.user.name}}</td>
+    <td>{{productJSON[0].id}}</td>
+    <td>{{productJSON[0].name}}</td>
+    <td>{{productJSON[0].description}}</td>
+    <td>{{productJSON[0].user.name}}</td>
   </tr>
 </table>
 
