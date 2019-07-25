@@ -194,6 +194,8 @@ class SolicitationController {
         await sol.save();
         await Product.query().where('id', '=', sol.product_id).update({status: 1});
 
+        console.log(user_solicitation)
+
         await Mail.send('emails.refusedSolicitation', {user_solicitation, productJSON}, (message) => {
           message
               .to(user.email)
@@ -208,6 +210,8 @@ class SolicitationController {
         sol.status = status;
         await sol.save();
         await Product.query().where('id', '=', sol.product_id).update({status: 3});
+
+        console.log(user_solicitation)
 
         await Mail.send('emails.acceptedSolicitation', {user_solicitation, productJSON}, (message) => {
           message
@@ -257,7 +261,7 @@ class SolicitationController {
       await sol.save();
       await Product.query().where('id', '=', sol.product_id).update({status: 1});
 
-      console.log("passou aqui")
+      console.log(user_solicitation)
 
       await Mail.send('emails.refusedSolicitation', {user_solicitation, productJSON}, (message) => {
           message
