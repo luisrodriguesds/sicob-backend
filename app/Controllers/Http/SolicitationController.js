@@ -194,7 +194,7 @@ class SolicitationController {
         await sol.save();
         await Product.query().where('id', '=', sol.product_id).update({status: 1});
 
-        console.log(user_solicitation)
+        console.log(user_solicitation.email)
 
         await Mail.send('emails.refusedSolicitation', {user_solicitation, productJSON}, (message) => {
           message
@@ -261,14 +261,14 @@ class SolicitationController {
       await sol.save();
       await Product.query().where('id', '=', sol.product_id).update({status: 1});
 
-      console.log(user_solicitation)
+      console.log(user_solicitation.email)
 
       await Mail.send('emails.refusedSolicitation', {user_solicitation, productJSON}, (message) => {
           message
               .to(user_solicitation.email)
               .from('<from-email>')
               .subject('SICOB - UFC | Solicitação Recusada')
-          });
+          })
 
       return true;
     }
