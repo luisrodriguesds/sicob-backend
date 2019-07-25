@@ -182,38 +182,14 @@ class SolicitationController {
       return response.status(406).json({"message":"You aren't the owner of this product"});
     }
 
-    
-    //>>>>>>>>>>>            O case 0 está sendo utilizado???? <<<<<<<<<<<<<<<
-
-
     switch (status) {
-      case "0":
-        //Solicitação recusada (Informar o motivo?)
-        //Produto volta para status 1
-        sol.status = status;
-        await sol.save();
-        await Product.query().where('id', '=', sol.product_id).update({status: 1});
-
-        console.log(user_solicitation.email)
-
-        await Mail.send('emails.refusedSolicitation', {user_solicitation, productJSON}, (message) => {
-          message
-              .to(user.email)
-              .from('<from-email>')
-              .subject('SICOB - UFC | Solicitação Recusada')
-          });
-
-        return sol;
-      break;
       case "2":
         //Solicitacao atendida, status do produto muda para 3 (compartilhado)
         sol.status = status;
         await sol.save();
         await Product.query().where('id', '=', sol.product_id).update({status: 3});
 
-        console.log(user_solicitation)
-
-        await Mail.send('emails.acceptedSolicitation', {user_solicitation, productJSON}, (message) => {
+        await Mail.send('emails.teste', {user_solicitation, productJSON}, (message) => {
           message
               .to(user_solicitation.email)
               .from('<from-email>')
@@ -248,8 +224,7 @@ class SolicitationController {
     const productJSON = JSON.parse(JSON.stringify(product));
 
     const user_solicitation = await User.findBy('id', sol.user_id);
-    
-    // console.log(auth.user.id, productJSON[0].user_id );
+ 
     if (sol == null) {
       return response.status(406).json({"message":"Solicitation not found"})
     }
@@ -261,9 +236,7 @@ class SolicitationController {
       await sol.save();
       await Product.query().where('id', '=', sol.product_id).update({status: 1});
 
-      console.log(user_solicitation.email)
-
-      await Mail.send('emails.refusedSolicitation', {user_solicitation, productJSON}, (message) => {
+      await Mail.send('emails.teste', {user_solicitation, productJSON}, (message) => {
           message
               .to(user_solicitation.email)
               .from('<from-email>')
