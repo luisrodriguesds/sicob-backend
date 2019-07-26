@@ -174,13 +174,10 @@ class ProductController {
 
     //if exist subcat
     const sub = await Subcategory.findBy('id', data.subcategory_id)
-    if (sub == null) {
-      return response.status(406).json({"message":"Subcategory not found"})
-    }
-    
-    //if sub belongs to cat
-    if (cat.id != sub.category_id) {
-      return response.status(406).json({"message":"Subcategory don't belongs to this category"})      
+    if (sub != null) {
+      if (cat.id != sub.category_id) {
+        return response.status(406).json({"message":"Subcategory don't belongs to this category"})      
+      }
     }
 
     const product = await Product.create({...data, user_id: auth.user.id, latitude, longitude})

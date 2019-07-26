@@ -38,6 +38,7 @@ Route.group(()=>{
   Route.post('/api/auth', 'UserController.authentication');
   Route.get('/api/user/requestNewPass/:email', 'UserController.requestNewPass');
   Route.post('/api/user/setNewPass/', 'UserController.setNewPass');
+  Route.put('/api/user/changePass/:id', 'UserController.changePass').middleware(['auth', 'OwnerOrManager']);
 });
 
 //Centro
