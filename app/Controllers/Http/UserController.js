@@ -220,20 +220,20 @@ class UserController {
     async changePass({ request, params, response }) {
         // get currently authenticated user
         const user = await User.findBy('id', params.id);
-        console.log("entrou aqui")
+        
         // verify if current password matches
         const verifyPassword = await Hash.verify(
             request.input('password'),
             user.password
         )
-    
+        
         // display appropriate message
         if (!verifyPassword) {
-            return response.status(400).json({message: 'Current password could not be verified! Please try again.'})
+            return response.status(400).json({"message": 'Current password could not be verified! Please try again.'})
         }
     
         // hash and save new password
-        user.password = await Hash.make(request.input('newPassword'))
+        user.password = request.input('newPassword')
         await user.save()
     
         return response.json({
